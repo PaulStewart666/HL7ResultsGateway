@@ -42,7 +42,7 @@ Following Clean Architecture, all automated tests for the Blazor WASM client wil
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Scaffold Blazor WASM client project using .NET CLI |  |  |
+| TASK-001 | Scaffold Blazor WASM client project using .NET CLI | ✅ | 2025-09-02 |
 | TASK-002 | Add Azure AD B2C authentication via .NET CLI |  |  |
 | TASK-003 | Configure project for Azure Static Web Apps deployment |  |  |
 | TASK-004 | Set up Bootstrap, Bootstrap Icons, Google Fonts, Font Awesome |  |  |
