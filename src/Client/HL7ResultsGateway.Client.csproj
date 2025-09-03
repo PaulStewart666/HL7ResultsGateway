@@ -14,4 +14,14 @@
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="10.0.0-preview.5.25277.114" />
   </ItemGroup>
 
+  <!-- Exclude legacy scaffolded layout components now replaced by Shared versions -->
+  <ItemGroup>
+    <Compile Remove="Layout\MainLayout.razor" />
+    <Content Remove="Layout\MainLayout.razor" />
+    <None Remove="Layout\MainLayout.razor" />
+    <Compile Remove="Layout\LoginDisplay.razor" />
+    <Content Remove="Layout\LoginDisplay.razor" />
+    <None Remove="Layout\LoginDisplay.razor" />
+  </ItemGroup>
+
 </Project>
