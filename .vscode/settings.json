@@ -45,5 +45,16 @@
   "github.copilot.chat.commitMessageGeneration.instructions": [
     { "file": ".github/awesome-copilot/instructions/conventional-commit-message.instructions.md" }
   ],
-  "azureFunctions.projectSubpath": "src\\HL7ResultsGateway.API"
+  "azureFunctions.projectSubpath": "src\\HL7ResultsGateway.API",
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true
+  },
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/obj/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true
+  }
 }
