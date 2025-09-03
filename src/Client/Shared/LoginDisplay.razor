@@ -1,0 +1,18 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+<AuthorizeView>
+    <Authorized>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" id="userMenu" data-bs-toggle="dropdown"
+                aria-expanded="false">User</button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                <li><a class="dropdown-item" href="authentication/profile">Profile</a></li>
+                <li><a class="dropdown-item" href="authentication/logout">Logout</a></li>
+            </ul>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <a class="btn btn-primary" href="authentication/login">Login</a>
+    </NotAuthorized>
+</AuthorizeView>
