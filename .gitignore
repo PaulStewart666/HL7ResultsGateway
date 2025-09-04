@@ -484,3 +484,4 @@ $RECYCLE.BIN/
 *.swp
 /src/Client/wwwroot/appsettings.Development.json
 /src/Client/wwwroot/appsettings.json
+/src/Client/wwwroot/appsettings.json
