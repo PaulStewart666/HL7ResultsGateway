@@ -1,0 +1,353 @@
+{
+  "databaseSchemaForHL7": {
+    "description": "Simplified JSON structure for SQL Developer to create SHIRE backend database view",
+    "purpose": "Query data to generate HL7 v2 ORU^R01 messages for laboratory results",
+    "dataElements": {
+      "patientData": {
+        "patientId": {
+          "value": "S0005683",
+          "description": "Primary patient identifier from hospital system",
+          "dbMapping": "dlab.INTID",
+          "actualField": "INTID from DNALAB table"
+        },
+        "nhsNumber": {
+          "value": "6539891121",
+          "description": "UK NHS number for patient identification",
+          "dbMapping": "p.SOCIAL_SECURITY",
+          "actualField": "SOCIAL_SECURITY from PATIENT table",
+          "note": "UK Social Security number used as NHS identifier"
+        },
+        "familyName": {
+          "value": "SHERMAN",
+          "description": "Patient's surname/family name",
+          "dbMapping": "p.LASTNAME",
+          "actualField": "LASTNAME from PATIENT table"
+        },
+        "givenName": {
+          "value": "David",
+          "description": "Patient's first name/given name",
+          "dbMapping": "p.FIRSTNAME",
+          "actualField": "FIRSTNAME from PATIENT table"
+        },
+        "dateOfBirth": {
+          "value": "20000105",
+          "description": "Date of birth in YYYYMMDD format",
+          "dbMapping": "p.DOB",
+          "actualField": "DOB from PATIENT table",
+          "format": "YYYYMMDD"
+        },
+        "gender": {
+          "value": "M",
+          "description": "Administrative sex (M/F/U/O)",
+          "dbMapping": "p.SEX",
+          "actualField": "SEX from PATIENT table"
+        },
+        "address": {
+          "note": "Address data not available in current SHIRE view - may need additional joins",
+          "streetAddress": {
+            "value": "Little Kings Caravan Park",
+            "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+            "suggestion": "May need to join PATIENT table to ADDRESS table if exists"
+          },
+          "addressLine2": {
+            "value": "Amroth Road",
+            "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW"
+          },
+          "city": {
+            "value": "Narberth",
+            "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW"
+          },
+          "county": {
+            "value": "Pembrokeshire",
+            "dbMapping": "di.DESCRIPTION (District Description)",
+            "actualField": "DESCRIPTION from DISTRICT table",
+            "note": "Using district description as closest available location data"
+          },
+          "postcode": {
+            "value": "SA67 8PG",
+            "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW"
+          }
+        }
+      },
+      "visitData": {
+        "note": "Visit data mapped to SHIRE backend fields based on [dbo].[Molec_WCP_Uploader] view",
+        "patientClass": {
+          "value": "U",
+          "description": "Patient class (I=Inpatient, O=Outpatient, E=Emergency, U=Unknown)",
+          "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+          "note": "Patient class not exposed in SHIRE view"
+        },
+        "facility": {
+          "value": "AVH Amman Valley Hospital",
+          "dbMapping": "di.DESCRIPTION (District Description)",
+          "actualField": "DESCRIPTION from DISTRICT table",
+          "note": "Using district description as facility proxy"
+        },
+        "facilityCode": {
+          "value": "AVH",
+          "dbMapping": "di.DISTRICT_ID",
+          "actualField": "DISTRICT_ID from DISTRICT table",
+          "note": "Using district ID as facility code"
+        },
+        "attendingDoctor": {
+          "doctorId": {
+            "value": "C4154934",
+            "dbMapping": "p.PHYSICIAN",
+            "actualField": "PHYSICIAN from PATIENT table",
+            "note": "Physician field contains doctor identifier"
+          },
+          "doctorName": {
+            "value": "Hurle, Rhidian Mr",
+            "dbMapping": "p.PHYSICIAN",
+            "actualField": "PHYSICIAN from PATIENT table",
+            "note": "Same field used for both ID and name - may contain formatted name"
+          }
+        },
+        "visitNumber": {
+          "value": "2.16.840.1.113883.2.1.8.1.3.304",
+          "description": "Unique visit/encounter identifier",
+          "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+          "note": "Visit number not exposed in current SHIRE view"
+        },
+        "creationDate": {
+          "value": "20200623111400",
+          "description": "HL7 message creation timestamp",
+          "dbMapping": "hl7.CREATION_DATE",
+          "actualField": "CREATION_DATE from HL7_MESSAGE table",
+          "format": "YYYYMMDDHHMMSS"
+        }
+      },
+      "orderData": {
+        "note": "Order data mapped to SHIRE backend - limited availability in current view",
+        "orderNumber": {
+          "value": "99988",
+          "description": "Laboratory order number",
+          "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+          "note": "Order number not exposed in SHIRE view structure"
+        },
+        "orderDate": {
+          "value": "2020-05-01",
+          "description": "Date order was placed",
+          "dbMapping": "hl7.CREATION_DATE",
+          "actualField": "CREATION_DATE from HL7_MESSAGE table",
+          "format": "YYYY-MM-DD",
+          "note": "Using HL7 creation date as order date proxy"
+        },
+        "orderType": {
+          "value": "V",
+          "description": "Order type (V=Verification, N=New, etc.)",
+          "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+          "note": "Order type classification not in SHIRE view"
+        }
+      },
+      "testData": {
+        "note": "Test data mapped to SHIRE backend fields",
+        "testCode": {
+          "value": "CHRSTT011",
+          "description": "Laboratory test identifier code",
+          "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+          "note": "Specific test codes not exposed in current SHIRE view - may be embedded in HL7 message content"
+        },
+        "testName": {
+          "value": "Chronic lymphocytic leukaemia analysis",
+          "description": "Human-readable test description",
+          "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+          "note": "Test names not exposed in current SHIRE view - may be embedded in HL7 message content"
+        },
+        "specimenDateTime": {
+          "value": "20200623111400",
+          "description": "When specimen was collected",
+          "dbMapping": "hl7.CREATION_DATE",
+          "actualField": "CREATION_DATE from HL7_MESSAGE table",
+          "format": "YYYYMMDDHHMMSS",
+          "note": "Using HL7 creation date as specimen collection proxy"
+        },
+        "resultDateTime": {
+          "value": "20200623111400",
+          "description": "When result was reported",
+          "dbMapping": "hl7.CREATION_DATE",
+          "actualField": "CREATION_DATE from HL7_MESSAGE table",
+          "format": "YYYYMMDDHHMMSS",
+          "note": "Using HL7 creation date as result reporting proxy"
+        },
+        "resultStatus": {
+          "value": "F",
+          "description": "Result status (F=Final, P=Preliminary, C=Corrected)",
+          "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+          "note": "Result status not exposed in SHIRE view - may be embedded in HL7 message"
+        }
+      },
+      "resultData": {
+        "note": "Result data mapped to SHIRE backend - document storage may be external",
+        "resultType": {
+          "value": "ED",
+          "description": "Data type (ED=Encapsulated Data for documents/PDFs)",
+          "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+          "note": "Result type not exposed in SHIRE view - may be embedded in HL7 message"
+        },
+        "resultValue": {
+          "sourceApplication": {
+            "value": "AP",
+            "dbMapping": "hl7.SOURCE_APPLICATION",
+            "actualField": "SOURCE_APPLICATION from HL7_MESSAGE table",
+            "note": "Direct mapping to source application field"
+          },
+          "dataType": {
+            "value": "PDF",
+            "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+            "note": "Document type not exposed - may be inferred from message content"
+          },
+          "encoding": {
+            "value": "BASE64",
+            "dbMapping": "NOT_DIRECTLY_AVAILABLE",
+            "note": "Encoding type not stored separately in SHIRE view"
+          },
+          "documentData": {
+            "value": "JVBERi0x",
+            "description": "Base64 encoded document content (truncated for example)",
+            "dbMapping": "hl7.MESSAGE_CONTENT",
+            "actualField": "MESSAGE_CONTENT from HL7_MESSAGE table",
+            "note": "Full HL7 message content - document data would be extracted from OBX segments"
+          }
+        }
+      },
+      "additionalNotes": {
+        "note": "Additional data mapped to SHIRE backend fields",
+        "comment": {
+          "value": "ph125529",
+          "description": "Additional comments or notes",
+          "dbMapping": "NOT_AVAILABLE_IN_CURRENT_VIEW",
+          "note": "Comments not exposed in SHIRE view - may be embedded in HL7 message"
+        },
+        "commentSource": {
+          "value": "Uploader",
+          "dbMapping": "hl7.SOURCE_APPLICATION",
+          "actualField": "SOURCE_APPLICATION from HL7_MESSAGE table",
+          "note": "Using source application as comment source"
+        }
+      }
+    },
+    "sqlViewRequirements": {
+      "note": "SQL view requirements updated to reflect actual SHIRE database structure based on [dbo].[Molec_WCP_Uploader]",
+      "actualShireTables": [
+        "HL7_MESSAGE (hl7) - Primary message storage",
+        "PATIENT (p) - Patient demographic data",
+        "DISTRICT (di) - Location/facility information"
+      ],
+      "actualShireFields": {
+        "hl7_message": [
+          "INTID - Primary key",
+          "MESSAGE_CONTENT - Full HL7 message",
+          "SOURCE_APPLICATION - Message source",
+          "CREATION_DATE - Timestamp"
+        ],
+        "patient": [
+          "INTID - Primary key",
+          "SOCIAL_SECURITY - Patient identifier",
+          "FIRSTNAME - Patient first name",
+          "LASTNAME - Patient last name",
+          "DOB - Date of birth",
+          "SEX - Gender",
+          "PHYSICIAN - Attending physician"
+        ],
+        "district": [
+          "DISTRICT_ID - District identifier",
+          "DESCRIPTION - District/location name"
+        ]
+      },
+      "actualKeyJoins": [
+        "hl7.INTID = p.INTID (Patient to HL7 message)",
+        "p.DISTRICT_ID = di.DISTRICT_ID (Patient to location)"
+      ],
+      "primaryTables": [
+        "HL7_MESSAGE (hl7) - Stores complete HL7 message content and metadata",
+        "PATIENT (p) - Patient demographics and physician assignment",
+        "DISTRICT (di) - Location/facility reference data"
+      ],
+      "legacyTablesNotAvailable": [
+        "patient_address - Address data not in current view",
+        "visit/encounter - Visit data not separately stored",
+        "facility/location - Using district as proxy",
+        "doctor/practitioner - Using patient.physician field",
+        "lab_order/lab_request - Order data embedded in HL7 message",
+        "lab_test/procedure - Test data embedded in HL7 message",
+        "lab_result - Result data embedded in HL7 message",
+        "result_document/result_file - Document data embedded in HL7 message",
+        "patient_notes - Notes embedded in HL7 message"
+      ],
+      "keyJoins": [
+        "hl7.INTID = p.INTID (Primary relationship - HL7 message to patient)",
+        "p.DISTRICT_ID = di.DISTRICT_ID (Patient location to district reference)"
+      ],
+      "legacyJoinsNotApplicable": [
+        "patient.patient_id = visit.patient_id - No separate visit table",
+        "visit.facility_id = facility.facility_id - Using district instead",
+        "visit.attending_doctor_id = doctor.doctor_id - Using patient.physician",
+        "lab_order.patient_id = patient.patient_id - Order data in HL7 message",
+        "lab_result.order_id = lab_order.order_id - Result data in HL7 message",
+        "lab_result.test_id = lab_test.test_id - Test data in HL7 message",
+        "result_document.result_id = lab_result.result_id - Document in HL7 message"
+      ],
+      "requiredFilters": [
+        "ROW_NUMBER() = 1 (Most recent message per patient per day)",
+        "Active patients only",
+        "HL7 messages with valid content",
+        "Patients with complete demographic data"
+      ],
+      "actualShireLogic": [
+        "Partitioning by p.SOCIAL_SECURITY, CONVERT(DATE, hl7.CREATION_DATE)",
+        "Ordering by hl7.CREATION_DATE DESC for most recent",
+        "INNER JOINs ensure data integrity",
+        "District lookup for location context"
+      ]
+    },
+    "hl7Constants": {
+      "note": "HL7 constants derived from SHIRE backend structure and message analysis",
+      "sendingApplication": "SHIRE^2.16.840.1.113883.2.1.8.1.5.304.1^ISO",
+      "sendingFacility": "7A2^7A2^L",
+      "receivingApplication": "INSE^2.16.840.1.113883.2.1.8.1.5.200^ISO",
+      "receivingFacility": "cymru.nhs.uk^RQFW3^L",
+      "messageType": "ORU^R01^ORU_R01",
+      "processingId": "P",
+      "versionId": "2.5.1",
+      "characterSet": "ASCII",
+      "patientIdAuthority": "2.16.840.1.113883.2.1.8.1.3.149",
+      "nhsAuthority": "NHS",
+      "visitAuthority": "2.16.840.1.113883.2.1.8.1.3.304",
+      "shireFields": {
+        "patientIdField": "p.SOCIAL_SECURITY",
+        "messageContentField": "hl7.MESSAGE_CONTENT",
+        "timestampField": "hl7.CREATION_DATE",
+        "sourceField": "hl7.SOURCE_APPLICATION",
+        "physicianField": "p.PHYSICIAN",
+        "locationField": "di.DESCRIPTION"
+      }
+    },
+    "dataFlow": {
+      "note": "Data flow from HL7 message parsing to SHIRE database",
+      "source": "HL7 v2.5.1 ORU^R01 messages from Welsh health systems",
+      "intermediateStorage": "Raw HL7 messages stored in MESSAGE_CONTENT field",
+      "parsing": "Extract key fields from HL7 segments for structured queries",
+      "targetTables": [
+        "patients (p) - Core patient demographics",
+        "hl7_messages (hl7) - Raw message storage and metadata",
+        "district (di) - Location/facility lookup"
+      ],
+      "keyJoins": ["p.INTID = hl7.PATIENT_ID", "p.DISTRICT_ID = di.ID"],
+      "transformation": {
+        "PID.3.1": "Extract NHS number → p.SOCIAL_SECURITY",
+        "PID.5.1": "Extract surname → p.LASTNAME",
+        "PID.5.2": "Extract forename → p.FIRSTNAME",
+        "PID.7.1": "Extract DOB → p.DOB",
+        "PID.8": "Extract gender → p.SEX",
+        "PV1.7": "Extract physician → p.PHYSICIAN",
+        "MSH": "Store complete message → hl7.MESSAGE_CONTENT",
+        "MSH.7": "Extract timestamp → hl7.CREATION_DATE"
+      },
+      "validation": {
+        "required": ["NHS number", "DOB", "surname"],
+        "duplicateHandling": "ROW_NUMBER() partitioning by patient ID"
+      }
+    }
+  }
+}
