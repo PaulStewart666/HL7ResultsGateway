@@ -1,0 +1,33 @@
+@page "/dashboard"
+@using HL7ResultsGateway.Client.Features.Dashboard.Components
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="Lab Results" Subtitle="Latest HL7 Messages">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="fa-solid fa-flask-vial fa-2x text-primary me-2" role="img" aria-label="Lab Icon"></span>
+                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">23 new results</span>
+                </div>
+                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Last updated: 10 Sep 2025</div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <span class="fa-solid fa-user-group fa-2x text-success me-2" role="img" aria-label="Patients Icon"></span>
+                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">8 active</span>
+                </div>
+                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Last admission: 09 Sep 2025</div>
+            </DashboardCard>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="System Health" Subtitle="Status Overview">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="fa-solid fa-heart-pulse fa-2x text-danger me-2" role="img" aria-label="Health Icon"></span>
+                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">All systems operational</span>
+                </div>
+                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Checked: 10 Sep 2025, 09:00</div>
+            </DashboardCard>
+        </div>
+    </div>
+</div>

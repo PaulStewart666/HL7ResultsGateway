@@ -1,0 +1,35 @@
+@using Microsoft.AspNetCore.Components.Forms
+@* Accessible, theme-aware form field using Bootstrap *@
+<div class="mb-3">
+    <label for="@Id" class="form-label">@Label @if (IsRequired) {
+    <span class="text-danger"
+            aria-label="required">*</span>
+        }
+</label>
+    <InputText id="@Id" class="form-control" @bind-Value="Value" aria-required="@IsRequired"
+        aria-invalid="@IsInvalid" />
+    @if (!string.IsNullOrWhiteSpace(HelpText))
+    {
+        <div class="form-text" id="@Id-help">@HelpText</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div class="invalid-feedback d-block" id="@Id-error">@ErrorMessage</div>
+    }
+</div>
+@code {
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+    [Parameter]
+    public string? HelpText { get; set; }
+    [Parameter]
+    public bool IsRequired { get; set; } = false;
+    [Parameter]
+    public bool IsInvalid { get; set; } = false;
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+    [Parameter]
+    public string? Value { get; set; }
+}
