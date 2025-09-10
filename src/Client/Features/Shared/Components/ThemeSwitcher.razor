@@ -2,7 +2,8 @@
 @inject IThemeService ThemeService
 
 <div class="dropdown">
-    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown"
+        aria-expanded="false">
         <span class="fa-solid fa-palette me-2" aria-hidden="true"></span>
         Theme: <span>@ThemeService.CurrentTheme</span>
     </button>
@@ -24,9 +25,9 @@
     {
         ThemeService.ThemeChanged += OnThemeChanged;
     }
-    private void ChangeTheme(string theme)
+    private async Task ChangeTheme(string theme)
     {
-        ThemeService.SetTheme(theme);
+        await ThemeService.SetThemeAsync(theme);
     }
     private void OnThemeChanged(string theme)
     {

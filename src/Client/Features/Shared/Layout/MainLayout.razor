@@ -41,8 +41,8 @@
 </div>
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        ThemeService.Initialize();
+        await ThemeService.InitializeAsync();
     }
 }

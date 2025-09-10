@@ -13,20 +13,38 @@ public class ThemeService : IThemeService
     {
         _jsRuntime = jsRuntime;
     }
-    public async void Initialize()
+    public async Task InitializeAsync()
     {
-        var theme = await _jsRuntime.InvokeAsync<string>("getTheme");
-        if (AvailableThemes.Contains(theme))
+        try
         {
-            _currentTheme = theme;
-            await _jsRuntime.InvokeVoidAsync("setTheme", theme);
+            var theme = await _jsRuntime.InvokeAsync<string>("getTheme");
+            if (AvailableThemes.Contains(theme))
+            {
+                _currentTheme = theme;
+                await _jsRuntime.InvokeVoidAsync("setTheme", theme);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Fallback to light theme if JS interop fails
+            Console.WriteLine($"Theme initialization failed: {ex.Message}");
+            _currentTheme = "light";
         }
     }
-    public async void SetTheme(string themeName)
+    public async Task SetThemeAsync(string themeName)
     {
         if (!AvailableThemes.Contains(themeName)) return;
+
         _currentTheme = themeName;
         ThemeChanged?.Invoke(themeName);
-        await _jsRuntime.InvokeVoidAsync("setTheme", themeName);
+
+        try
+        {
+            await _jsRuntime.InvokeVoidAsync("setTheme", themeName);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Theme setting failed: {ex.Message}");
+        }
     }
 }
