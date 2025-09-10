@@ -1,0 +1,14 @@
+@* Accessible, theme-aware error display using Bootstrap alert *@
+@if (!string.IsNullOrWhiteSpace(Message))
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert" aria-live="assertive">
+        <span class="me-2" aria-hidden="true">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem;"></i>
+        </span>
+        <span>@Message</span>
+    </div>
+}
+@code {
+    [Parameter]
+    public string? Message { get; set; }
+}

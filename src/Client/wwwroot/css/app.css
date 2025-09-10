@@ -1,3 +1,49 @@
+@import url('../../Resources/Styles/variables.css');
+@import url('../../Resources/Styles/themes/light.css');
+
+/* Bootstrap overrides using CSS custom properties */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-family-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    color: var(--color-primary);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: #fff;
+}
+
+.card {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* Accessibility: Focus outline */
+:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* High contrast for error and validation messages */
+.validation-message, .invalid {
+    color: var(--color-danger);
+    outline: 1px solid var(--color-danger);
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

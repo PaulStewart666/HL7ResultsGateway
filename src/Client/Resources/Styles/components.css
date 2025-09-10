@@ -1,0 +1,11 @@
+/* Component-specific styles for LoadingIndicator and ErrorDisplay */
+.spinner-border {
+  /* Use theme color variable for spinner */
+  border-color: var(--bs-primary) var(--bs-primary) var(--bs-primary) var(--bs-primary);
+}
+.alert-danger {
+  /* Ensure sufficient contrast for error alerts */
+  background-color: var(--bs-danger-bg-subtle, #f8d7da);
+  color: var(--bs-danger-text-emphasis, #842029);
+  border-color: var(--bs-danger-border-subtle, #f5c2c7);
+}
