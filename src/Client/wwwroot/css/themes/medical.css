@@ -1,5 +1,31 @@
-:root {
-  --background-color: #eaf6f6;
-  --text-color: #222;
-  --color-primary: #17a2b8;
+/* Medical Theme - Professional healthcare color scheme */
+body.theme-medical {
+  --background-color: #f8f9fa;
+  --text-color: #2c3e50;
+  --color-primary: #27ae60; /* Medical green */
+  --color-secondary: #34495e;
+  --color-success: #2ecc71;
+  --color-danger: #e74c3c;
+  --color-warning: #f39c12;
+  --color-info: #3498db;
+}
+
+/* Medical theme specific styles */
+body.theme-medical .navbar-light {
+  background-color: #ecf0f1 !important;
+}
+
+body.theme-medical .card {
+  border: 1px solid #bdc3c7;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.theme-medical .btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+body.theme-medical .btn-outline-secondary {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
 }
