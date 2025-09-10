@@ -1,5 +1,5 @@
-@import url('../../Resources/Styles/variables.css');
-@import url('../../Resources/Styles/themes/light.css');
+@import url('variables.css');
+@import url('themes/light.css');
 
 /* Bootstrap overrides using CSS custom properties */
 body {

@@ -1,0 +1,42 @@
+@using HL7ResultsGateway.Client.Core.Theming
+@inject IThemeService ThemeService
+
+<div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="fa-solid fa-palette me-2" aria-hidden="true"></span>
+        Theme: <span>@ThemeService.CurrentTheme</span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="themeDropdown">
+        @foreach (var theme in ThemeService.AvailableThemes)
+        {
+            <li>
+                <button class="dropdown-item" @onclick="() => ChangeTheme(theme)">
+                    <span class="fa-solid @(GetIcon(theme)) me-2" aria-hidden="true"></span>
+                    <span style="font-family: 'Roboto', sans-serif;">@theme.ToUpperInvariant()</span>
+                </button>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.ThemeChanged += OnThemeChanged;
+    }
+    private void ChangeTheme(string theme)
+    {
+        ThemeService.SetTheme(theme);
+    }
+    private void OnThemeChanged(string theme)
+    {
+        StateHasChanged();
+    }
+    private string GetIcon(string theme) => theme switch
+    {
+        "light" => "fa-sun",
+        "dark" => "fa-moon",
+        "medical" => "fa-notes-medical",
+        _ => "fa-palette"
+    };
+}

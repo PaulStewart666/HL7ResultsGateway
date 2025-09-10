@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using HL7ResultsGateway.Client.Features.Shared.Components
+@using HL7ResultsGateway.Client.Core.Theming
+@inject IThemeService ThemeService
 
 
 <header class="theme-header" role="banner">
@@ -23,6 +26,7 @@
                     </li>
                 </ul>
                 <LoginDisplay />
+                <ThemeSwitcher />
             </div>
         </div>
     </nav>
@@ -35,3 +39,10 @@
 <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
     <!-- Toast notifications will be rendered here -->
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.Initialize();
+    }
+}
