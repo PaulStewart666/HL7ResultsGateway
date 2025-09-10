@@ -3,12 +3,18 @@ window.setTheme = function(themeName) {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-medical');
     // Add the selected theme class
     document.body.classList.add('theme-' + themeName);
-    // Optionally persist theme to localStorage
+    // Persist theme to localStorage
     localStorage.setItem('hl7Theme', themeName);
-    // Update CSS custom properties if needed
-    // (Assume theme CSS files set variables via body class)
+    console.log('Theme set to:', themeName);
 };
 
 window.getTheme = function() {
     return localStorage.getItem('hl7Theme') || 'light';
+};
+
+// Initialize theme on page load
+window.initializeTheme = function() {
+    const savedTheme = window.getTheme();
+    window.setTheme(savedTheme);
+    console.log('Theme initialized to:', savedTheme);
 };

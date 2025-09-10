@@ -1,5 +1,12 @@
-:root {
-  --background-color: #fff;
+body.theme-light {
+  --background-color: #ffffff;
   --text-color: #212529;
-  --color-primary: #007bff;
+  --color-primary: #0d6efd;
+  --color-secondary: #6c757d;
+  --color-success: #198754;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-info: #0dcaf0;
+  --font-family-base: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-heading: 'Roboto Slab', serif;
 }

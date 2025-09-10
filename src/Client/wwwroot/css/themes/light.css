@@ -1,23 +1,59 @@
-/* Light Theme */
+/* Light Theme - Enhanced specificity to override Bootstrap */
 body.theme-light {
-  --background-color: #fff;
-  --text-color: #212529;
-  --color-primary: #007bff;
-  --color-secondary: #6c757d;
-  --color-success: #28a745;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --color-info: #17a2b8;
+  --background-color: #ffffff !important;
+  --text-color: #212529 !important;
+  --color-primary: #0d6efd !important;
+  --color-secondary: #6c757d !important;
+  --color-success: #198754 !important;
+  --color-danger: #dc3545 !important;
+  --color-warning: #ffc107 !important;
+  --color-info: #0dcaf0 !important;
+  --font-family-base: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  --font-family-heading: 'Roboto Slab', serif !important;
+
+  /* Direct styling with high specificity */
+  background-color: #ffffff !important;
+  color: #212529 !important;
 }
 
-/* Default theme (fallback to light) */
-:root {
-  --background-color: #fff;
-  --text-color: #212529;
-  --color-primary: #007bff;
-  --color-secondary: #6c757d;
-  --color-success: #28a745;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --color-info: #17a2b8;
+/* Light theme component overrides */
+body.theme-light .card {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+body.theme-light .navbar {
+  background-color: #f8f9fa !important;
+}
+
+body.theme-light .navbar-light .navbar-brand,
+body.theme-light .navbar-light .navbar-nav .nav-link {
+  color: #212529 !important;
+}
+
+body.theme-light .btn-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+/* Force Bootstrap container styling */
+body.theme-light .container,
+body.theme-light .container-fluid {
+  color: #212529 !important;
+}
+
+/* Override headings */
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
+body.theme-light h6 {
+  color: #0d6efd !important;
+}
+
+body.theme-light p,
+body.theme-light div,
+body.theme-light span:not(.fa):not([class*="icon"]) {
+  color: #212529 !important;
 }

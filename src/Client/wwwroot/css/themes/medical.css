@@ -1,31 +1,70 @@
-/* Medical Theme - Professional healthcare color scheme */
+/* Medical Theme - Enhanced specificity to override Bootstrap */
 body.theme-medical {
-  --background-color: #f8f9fa;
-  --text-color: #2c3e50;
-  --color-primary: #27ae60; /* Medical green */
-  --color-secondary: #34495e;
-  --color-success: #2ecc71;
-  --color-danger: #e74c3c;
-  --color-warning: #f39c12;
-  --color-info: #3498db;
+  --background-color: #f8f9fa !important;
+  --text-color: #495057 !important;
+  --color-primary: #28a745 !important;
+  --color-secondary: #17a2b8 !important;
+  --color-success: #28a745 !important;
+  --color-danger: #dc3545 !important;
+  --color-warning: #ffc107 !important;
+  --color-info: #17a2b8 !important;
+  --font-family-base: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  --font-family-heading: 'Roboto Slab', serif !important;
+
+  /* Direct styling with high specificity */
+  background-color: #f8f9fa !important;
+  color: #495057 !important;
 }
 
-/* Medical theme specific styles */
-body.theme-medical .navbar-light {
-  background-color: #ecf0f1 !important;
-}
-
+/* Medical theme component overrides */
 body.theme-medical .card {
-  border: 1px solid #bdc3c7;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #ffffff !important;
+  border-left: 4px solid #28a745 !important;
+  color: #495057 !important;
+}
+
+body.theme-medical .navbar {
+  background-color: #28a745 !important;
+}
+
+body.theme-medical .navbar .navbar-brand,
+body.theme-medical .navbar .nav-link {
+  color: #fff !important;
 }
 
 body.theme-medical .btn-primary {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
 }
 
-body.theme-medical .btn-outline-secondary {
-  color: var(--color-secondary);
-  border-color: var(--color-secondary);
+body.theme-medical .btn-outline-primary {
+  color: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+body.theme-medical .btn-outline-primary:hover {
+  background-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+/* Force Bootstrap container styling */
+body.theme-medical .container,
+body.theme-medical .container-fluid {
+  color: #495057 !important;
+}
+
+/* Override headings */
+body.theme-medical h1,
+body.theme-medical h2,
+body.theme-medical h3,
+body.theme-medical h4,
+body.theme-medical h5,
+body.theme-medical h6 {
+  color: #28a745 !important;
+}
+
+body.theme-medical p,
+body.theme-medical div,
+body.theme-medical span:not(.fa):not([class*="icon"]) {
+  color: #495057 !important;
 }

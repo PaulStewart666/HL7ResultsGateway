@@ -1,5 +1,33 @@
-:root {
+body.theme-dark {
   --background-color: #212529;
   --text-color: #f8f9fa;
-  --color-primary: #0d6efd;
+  --color-primary: #6ea8fe;
+  --color-secondary: #a7acb1;
+  --color-success: #75b798;
+  --color-danger: #ea868f;
+  --color-warning: #ffda6a;
+  --color-info: #6edff6;
+  --font-family-base: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-heading: 'Roboto Slab', serif;
+}
+
+/* Dark theme specific overrides */
+body.theme-dark .card {
+  background-color: #343a40;
+  border: 1px solid #495057;
+}
+
+body.theme-dark .navbar {
+  background-color: #343a40 !important;
+  border-bottom: 1px solid #495057;
+}
+
+body.theme-dark .btn-outline-primary {
+  color: #6ea8fe;
+  border-color: #6ea8fe;
+}
+
+body.theme-dark .btn-outline-primary:hover {
+  background-color: #6ea8fe;
+  color: #000;
 }
