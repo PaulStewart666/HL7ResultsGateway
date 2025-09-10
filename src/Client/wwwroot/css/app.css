@@ -2,6 +2,8 @@
 @import url('themes/light.css');
 @import url('themes/dark.css');
 @import url('themes/medical.css');
+@import url('print.css');
+@import url('accessibility.css');
 
 /* Bootstrap overrides using CSS custom properties */
 body {

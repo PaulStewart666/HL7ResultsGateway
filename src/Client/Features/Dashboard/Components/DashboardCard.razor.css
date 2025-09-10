@@ -1,0 +1,288 @@
+/* DashboardCard Component Scoped Styles */
+
+/* Card container */
+::deep .dashboard-card {
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-secondary, #dee2e6);
+    background: var(--background-color, white);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+::deep .dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+    border-color: var(--color-primary, #007bff);
+}
+
+/* Card header */
+::deep .card-header {
+    background: linear-gradient(135deg, var(--color-primary, #007bff), var(--color-info, #17a2b8));
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+}
+
+::deep .card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(30px, -30px);
+}
+
+::deep .card-header h5 {
+    font-family: var(--font-family-heading, 'Roboto Slab', serif);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.125rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Card icon */
+::deep .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary, #007bff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: rgba(0, 123, 255, 0.1);
+    margin-inline: auto;
+    transition: all 0.3s ease;
+}
+
+::deep .dashboard-card:hover .card-icon {
+    transform: scale(1.1);
+    background: rgba(0, 123, 255, 0.2);
+}
+
+/* Card body */
+::deep .card-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* Primary metric display */
+::deep .metric-primary {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary, #007bff);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-family-heading, 'Roboto Slab', serif);
+}
+
+/* Secondary metric text */
+::deep .metric-secondary {
+    font-size: 0.875rem;
+    color: var(--text-muted, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Status indicators */
+::deep .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+::deep .status-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--color-success, #28a745);
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+::deep .status-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: var(--color-warning, #ffc107);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+::deep .status-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--color-danger, #dc3545);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+::deep .status-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    color: var(--color-info, #17a2b8);
+    border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+/* Progress indicators */
+::deep .progress-wrapper {
+    margin-top: 1rem;
+}
+
+::deep .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted, #6c757d);
+    font-weight: 500;
+}
+
+::deep .progress {
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgba(0, 123, 255, 0.1);
+    overflow: hidden;
+}
+
+::deep .progress-bar {
+    background: linear-gradient(90deg, var(--color-primary, #007bff), var(--color-info, #17a2b8));
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+/* Quick action buttons */
+::deep .card-actions {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+::deep .btn-card-action {
+    padding: 0.375rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-primary, #007bff);
+    background: transparent;
+    color: var(--color-primary, #007bff);
+}
+
+::deep .btn-card-action:hover {
+    background: var(--color-primary, #007bff);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Trend indicators */
+::deep .trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+::deep .trend-up {
+    color: var(--color-success, #28a745);
+}
+
+::deep .trend-down {
+    color: var(--color-danger, #dc3545);
+}
+
+::deep .trend-neutral {
+    color: var(--text-muted, #6c757d);
+}
+
+/* Loading state */
+::deep .card-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+::deep .card-loading .metric-primary {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 2s infinite;
+    color: transparent;
+    border-radius: 4px;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    ::deep .dashboard-card {
+        border-width: 2px;
+    }
+
+    ::deep .card-icon {
+        border: 2px solid var(--color-primary, #007bff);
+    }
+
+    ::deep .btn-card-action:hover {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    ::deep .dashboard-card,
+    ::deep .card-icon,
+    ::deep .btn-card-action,
+    ::deep .progress-bar {
+        transition: none;
+    }
+
+    ::deep .dashboard-card:hover {
+        transform: none;
+    }
+
+    ::deep .dashboard-card:hover .card-icon {
+        transform: none;
+    }
+
+    ::deep .btn-card-action:hover {
+        transform: none;
+    }
+
+    ::deep .card-loading .metric-primary {
+        animation: none;
+    }
+}
+
+/* Dark theme adjustments */
+:global(.dark-theme) ::deep .dashboard-card {
+    background: var(--background-color-elevated, #2d3748);
+    border-color: var(--color-secondary, #4a5568);
+}
+
+:global(.dark-theme) ::deep .card-icon {
+    background: rgba(66, 153, 225, 0.2);
+}
+
+/* Medical theme adjustments */
+:global(.medical-theme) ::deep .card-header {
+    background: linear-gradient(135deg, var(--color-primary, #1976d2), var(--color-info, #0288d1));
+}
+
+:global(.medical-theme) ::deep .card-icon {
+    background: rgba(25, 118, 210, 0.1);
+    color: var(--color-primary, #1976d2);
+}

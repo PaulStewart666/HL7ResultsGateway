@@ -1,0 +1,104 @@
+/* MainLayout Component Scoped Styles */
+
+/* Header styling with theme awareness */
+::deep .theme-header {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 1px solid var(--color-secondary, #6c757d);
+}
+
+/* Brand styling */
+::deep .navbar-brand {
+    font-family: var(--font-family-heading, 'Roboto Slab', serif);
+    font-weight: 700;
+    color: var(--color-primary, #007bff) !important;
+    transition: color 0.3s ease;
+}
+
+::deep .navbar-brand:hover {
+    color: var(--color-info, #17a2b8) !important;
+}
+
+/* Navigation items */
+::deep .nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 0.375rem;
+    margin-inline: 0.25rem;
+}
+
+::deep .nav-link:hover {
+    background-color: var(--color-primary, #007bff);
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+::deep .nav-link.active {
+    background-color: var(--color-primary, #007bff);
+    color: white !important;
+}
+
+/* Skip link for accessibility */
+::deep .skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 999999;
+    padding: 8px 16px;
+    background-color: var(--color-primary, #007bff);
+    color: white;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    font-weight: bold;
+}
+
+::deep .skip-link:focus {
+    left: 6px;
+    top: 6px;
+}
+
+/* Main content area */
+::deep main {
+    min-height: calc(100vh - 120px);
+}
+
+/* Toast notification area */
+::deep .toast-container {
+    z-index: 1080;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    ::deep .navbar-nav {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-secondary, #6c757d);
+    }
+
+    ::deep .nav-link {
+        margin: 0.25rem 0;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    ::deep .theme-header {
+        border-bottom-width: 2px;
+    }
+
+    ::deep .nav-link:hover,
+    ::deep .nav-link.active {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    ::deep .nav-link,
+    ::deep .navbar-brand {
+        transition: none;
+    }
+
+    ::deep .nav-link:hover {
+        transform: none;
+    }
+}

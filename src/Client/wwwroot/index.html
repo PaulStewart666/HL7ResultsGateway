@@ -8,20 +8,256 @@
     <base href="/" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="preload" id="webassembly" />
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        crossorigin="anonymous">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Font Awesome Free -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts: Roboto, Inter, Roboto Slab -->
+
+    <!-- Critical CSS - Inlined for optimal performance -->
+    <style>
+        /* Critical CSS - Above-the-fold content only */
+        /* This CSS is inlined in the HTML head for optimal loading performance */
+
+        /* Essential CSS custom properties for immediate rendering */
+        :root {
+            /* Primary colors - most important */
+            --color-primary: #007bff;
+            --color-secondary: #6c757d;
+            --color-success: #28a745;
+            --color-danger: #dc3545;
+            --color-warning: #ffc107;
+            --color-info: #17a2b8;
+            --color-light: #f8f9fa;
+            --color-dark: #343a40;
+
+            /* Background and text for immediate rendering */
+            --background-color: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+
+            /* Typography - essential for layout stability */
+            --font-family-base: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+            --font-family-heading: 'Roboto Slab', Georgia, serif;
+            --font-size-base: 1rem;
+            --line-height-base: 1.5;
+
+            /* Spacing - prevents layout shifts */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+
+            /* Border radius for consistent appearance */
+            --border-radius: 0.375rem;
+            --border-radius-sm: 0.25rem;
+            --border-radius-lg: 0.5rem;
+
+            /* Shadows for depth */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Body and html - prevent layout shifts */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Essential layout structure - prevent CLS */
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Loading spinner - critical for UX */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--color-light);
+            border-top: 4px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Essential navbar structure - prevents layout shift */
+        .navbar {
+            padding: 0.75rem 1rem;
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--color-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            font-family: var(--font-family-heading);
+            font-weight: 700;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 1.25rem;
+        }
+
+        /* Container for layout stability */
+        .container {
+            width: 100%;
+            padding-right: var(--spacing-4);
+            padding-left: var(--spacing-4);
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        /* Essential responsive breakpoints */
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        /* Skip link for accessibility - critical */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            z-index: 999999;
+            padding: 8px 16px;
+            background-color: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            left: 6px;
+            top: 6px;
+        }
+
+        /* Essential theme switching classes */
+        .light-theme {
+            --background-color: #ffffff;
+            --text-color: #212529;
+            --color-secondary: #6c757d;
+        }
+
+        .dark-theme {
+            --background-color: #1a1a1a;
+            --background-color-elevated: #2d3748;
+            --text-color: #e2e8f0;
+            --text-muted: #a0aec0;
+            --color-secondary: #4a5568;
+        }
+
+        .medical-theme {
+            --color-primary: #1976d2;
+            --color-info: #0288d1;
+            --background-color: #fafafa;
+            --background-color-elevated: #ffffff;
+        }
+
+        /* Reduced motion support - accessibility critical */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+
+    <!-- Preload critical fonts -->
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap">
+
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    </noscript>
+
+    <!-- Load icon fonts with low priority -->
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    </noscript>
+
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    </noscript>
+
+    <!-- Load fonts asynchronously -->
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap"
+            rel="stylesheet">
+    </noscript>
+
+    <!-- Load application CSS -->
     <link rel="stylesheet" href="css/app.css" />
-    <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href="HL7ResultsGateway.Client.styles.css" rel="stylesheet" /> -->
+
+    <!-- CSS async loading helper -->
+    <script>
+        /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+        !function (a) { "use strict"; var b = function (b, c, d) { function e(a) { return h.body ? a() : void setTimeout(function () { e(a) }) } function f() { i.addEventListener && i.removeEventListener("load", f), i.media = d || "all" } var g, h = a.document, i = h.createElement("link"); if (c) g = c; else { var j = (h.body || h.getElementsByTagName("head")[0]).childNodes; g = j[j.length - 1] } return i.rel = "stylesheet", i.href = b, i.media = "only x", e(function () { g.parentNode.insertBefore(i, c ? g : g.nextSibling) }), i.addEventListener && i.addEventListener("load", f), i.onloadcssdefined = function (a) { for (var c, b = 0; b < h.styleSheets.length; b++)h.styleSheets[b].href && h.styleSheets[b].href.indexOf(i.href) > -1 && (c = !0); c ? a() : setTimeout(function () { i.onloadcssdefined(a) }) }, i.onloadcssdefined(f), i }; "undefined" != typeof exports ? exports.loadCSS = b : a.loadCSS = b }("undefined" != typeof global ? global : this);
+    </script>
+
+    <!-- If you add any scoped CSS files, uncomment the following to load them -->
+    <link href="HL7ResultsGateway.Client.styles.css" rel="stylesheet" />
+
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
@@ -30,11 +266,9 @@
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <div class="loading-spinner">
+            <div>Loading HL7 Results Gateway...</div>
+        </div>
     </div>
 
     <div id="blazor-error-ui">
@@ -42,9 +276,11 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
+
+    <!-- Load JavaScript at end of body for optimal loading -->
     <script src="js/themes.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    <!-- Bootstrap JavaScript - defer for better performance -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
     <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>

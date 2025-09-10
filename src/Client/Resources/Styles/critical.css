@@ -1,0 +1,240 @@
+/* Critical CSS - Above-the-fold content only */
+/* This CSS is inlined in the HTML head for optimal loading performance */
+
+/* Essential CSS custom properties for immediate rendering */
+:root {
+    /* Primary colors - most important */
+    --color-primary: #007bff;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+    --color-light: #f8f9fa;
+    --color-dark: #343a40;
+
+    /* Background and text for immediate rendering */
+    --background-color: #ffffff;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+
+    /* Typography - essential for layout stability */
+    --font-family-base: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+    --font-family-heading: 'Roboto Slab', Georgia, serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.5;
+
+    /* Spacing - prevents layout shifts */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+
+    /* Border radius for consistent appearance */
+    --border-radius: 0.375rem;
+    --border-radius-sm: 0.25rem;
+    --border-radius-lg: 0.5rem;
+
+    /* Shadows for depth */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Body and html - prevent layout shifts */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Essential layout structure - prevent CLS */
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Loading spinner - critical for UX */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loading-spinner::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-light);
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Essential navbar structure - prevents layout shift */
+.navbar {
+    padding: 0.75rem 1rem;
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--color-secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 1.25rem;
+}
+
+/* Container for layout stability */
+.container {
+    width: 100%;
+    padding-right: var(--spacing-4);
+    padding-left: var(--spacing-4);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Essential responsive breakpoints */
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Essential buttons for immediate interaction */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    border-radius: var(--border-radius);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    text-decoration: none;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Essential form controls */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    line-height: var(--line-height-base);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: 1px solid var(--color-secondary);
+    border-radius: var(--border-radius);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Skip link for accessibility - critical */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 999999;
+    padding: 8px 16px;
+    background-color: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    font-weight: bold;
+}
+
+.skip-link:focus {
+    left: 6px;
+    top: 6px;
+}
+
+/* Essential theme switching classes */
+.light-theme {
+    --background-color: #ffffff;
+    --text-color: #212529;
+    --color-secondary: #6c757d;
+}
+
+.dark-theme {
+    --background-color: #1a1a1a;
+    --background-color-elevated: #2d3748;
+    --text-color: #e2e8f0;
+    --text-muted: #a0aec0;
+    --color-secondary: #4a5568;
+}
+
+.medical-theme {
+    --color-primary: #1976d2;
+    --color-info: #0288d1;
+    --background-color: #fafafa;
+    --background-color-elevated: #ffffff;
+}
+
+/* Reduced motion support - accessibility critical */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
