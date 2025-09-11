@@ -19,7 +19,8 @@
                     <h1 class="h2 mb-1">JSON to HL7 Converter</h1>
                     <p class="text-muted mb-0">
                         Convert patient and laboratory data from JSON format to HL7 v2 messages (ORU^R01).
-                        <a href="#" class="text-decoration-none ms-2" @onclick="ShowHelp" @onclick:preventDefault="true">
+                        <a href="#" class="text-decoration-none ms-2" @onclick="ShowHelp"
+                            @onclick:preventDefault="true">
                             <i class="fa fa-question-circle" aria-hidden="true"></i>
                             Need help?
                         </a>
@@ -32,7 +33,8 @@
     <!-- Help Modal -->
     @if (ShowHelpModal)
     {
-        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel"
+            aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -48,7 +50,8 @@
                                 <h6><i class="fa fa-play-circle me-1" aria-hidden="true"></i> Getting Started</h6>
                                 <ol>
                                     <li><strong>Choose a template</strong> from the dropdown for quick testing</li>
-                                    <li><strong>Fill in patient information</strong> including ID, name, date of birth, and gender</li>
+                                    <li><strong>Fill in patient information</strong> including ID, name, date of birth, and
+                                        gender</li>
                                     <li><strong>Add observations</strong> with values, units, and reference ranges</li>
                                     <li><strong>Click "Convert to HL7"</strong> to generate the HL7 v2 message</li>
                                 </ol>
@@ -64,14 +67,16 @@
                             <div class="col-md-6">
                                 <h6><i class="fa fa-file-text-o me-1" aria-hidden="true"></i> About HL7 v2</h6>
                                 <p class="small">
-                                    HL7 (Health Level Seven) v2 is a standard for exchanging health information between healthcare applications.
+                                    HL7 (Health Level Seven) v2 is a standard for exchanging health information between
+                                    healthcare applications.
                                     The ORU^R01 message type is used for transmitting laboratory results.
                                 </p>
 
                                 <h6><i class="fa fa-shield me-1" aria-hidden="true"></i> Privacy Note</h6>
                                 <p class="small text-info">
                                     <i class="fa fa-info-circle me-1" aria-hidden="true"></i>
-                                    This is a testing tool. Do not use real patient data. All templates contain fictional information for demonstration purposes only.
+                                    This is a testing tool. Do not use real patient data. All templates contain fictional
+                                    information for demonstration purposes only.
                                 </p>
 
                                 <h6><i class="fa fa-code me-1" aria-hidden="true"></i> Technical Details</h6>
@@ -100,7 +105,7 @@
     {
         <!-- Loading Overlay -->
         <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-             style="background-color: rgba(255,255,255,0.8); z-index: 1050;">
+            style="background-color: rgba(255,255,255,0.8); z-index: 1050;">
             <div class="text-center">
                 <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Loading...</span>
@@ -114,16 +119,14 @@
     <div class="row">
         <!-- Input Section -->
         <div class="col-lg-6 mb-4">
-            <JsonInputComponent @ref="InputComponent"
-                              OnConvert="HandleConvert"
-                              IsLoading="IsLoading" />
+            <JsonInputComponent @ref="InputComponent" Request="CurrentRequest" RequestChanged="HandleRequestChanged"
+                OnConvertRequest="HandleConvert" IsProcessing="IsLoading" />
         </div>
 
         <!-- Results Section -->
         <div class="col-lg-6 mb-4">
-            <HL7ResultsComponent Result="ConversionResult"
-                               OnClearResults="ClearResults"
-                               OnConvertAnother="PrepareForNewConversion" />
+            <HL7ResultsComponent Result="ConversionResult" OnClearResults="ClearResults"
+                OnConvertAnother="PrepareForNewConversion" />
         </div>
     </div>
 
@@ -143,10 +146,17 @@
 @code {
     private JsonInputComponent? InputComponent;
     private JsonToHL7Result? ConversionResult;
+    private JsonToHL7Request CurrentRequest = new();
     private bool IsLoading = false;
     private bool ShowHelpModal = false;
     private string StatusMessage = string.Empty;
     private string StatusType = "info"; // info, success, warning, error
+
+    private void HandleRequestChanged(JsonToHL7Request request)
+    {
+        CurrentRequest = request;
+        StateHasChanged();
+    }
 
     private async Task HandleConvert(JsonToHL7Request request)
     {
@@ -165,10 +175,6 @@
             {
                 StatusMessage = "JSON data successfully converted to HL7 v2 format!";
                 StatusType = "success";
-
-                // Auto-scroll to results on small screens
-                await Task.Delay(500);
-                await JSRuntime.InvokeVoidAsync("scrollToResults");
             }
             else
             {
@@ -196,10 +202,10 @@
             {
                 await Task.Delay(5000);
                 await InvokeAsync(() =>
-                {
-                    StatusMessage = string.Empty;
-                    StateHasChanged();
-                });
+    {
+                StatusMessage = string.Empty;
+                StateHasChanged();
+            });
             });
         }
     }

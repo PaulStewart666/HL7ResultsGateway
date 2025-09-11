@@ -18,3 +18,23 @@ window.initializeTheme = function() {
     window.setTheme(savedTheme);
     console.log('Theme initialized to:', savedTheme);
 };
+
+// File download utility function
+window.downloadFile = function(filename, dataUrl) {
+    try {
+        // Create a temporary anchor element to trigger download
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        console.log('File download initiated:', filename);
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        throw error;
+    }
+};

@@ -43,7 +43,7 @@ public class JsonToHL7Service : IJsonToHL7Service
             var apiRequest = ConvertToApiRequest(request);
 
             // Make the API call
-            var response = await _httpClient.PostAsJsonAsync("api/convert-json-to-hl7", apiRequest, _jsonOptions, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync("api/hl7/convert", apiRequest, _jsonOptions, cancellationToken);
             stopwatch.Stop();
 
             // Log response details for debugging
