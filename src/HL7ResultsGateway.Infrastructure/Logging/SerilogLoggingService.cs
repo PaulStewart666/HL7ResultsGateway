@@ -35,7 +35,7 @@ public class SerilogLoggingService : ILoggingService
         _logger.LogDebug(message, args);
     }
 
-    public IDisposable BeginScope(string messageFormat, params object[] args)
+    public IDisposable? BeginScope(string messageFormat, params object[] args)
     {
         return _logger.BeginScope(messageFormat, args);
     }

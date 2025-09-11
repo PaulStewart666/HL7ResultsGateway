@@ -42,8 +42,8 @@ public class JsonHL7Converter : IJsonHL7Converter
             var hl7Result = new HL7Result
             {
                 MessageType = HL7MessageType.ORU_R01,
-                Patient = ConvertPatient(jsonInput.Patient),
-                Observations = ConvertObservations(jsonInput.Observations)
+                Patient = ConvertPatient(jsonInput.Patient ?? throw new InvalidOperationException("Patient data is required")),
+                Observations = ConvertObservations(jsonInput.Observations ?? new List<JsonObservationData>())
             };
 
             _logger.LogInformation("JSON to HL7 conversion completed successfully",
@@ -125,11 +125,11 @@ public class JsonHL7Converter : IJsonHL7Converter
     {
         var patient = new Patient
         {
-            PatientId = patientData.PatientId,
-            FirstName = patientData.FirstName,
-            LastName = patientData.LastName,
-            MiddleName = patientData.MiddleName,
-            Address = patientData.Address
+            PatientId = patientData.PatientId ?? string.Empty,
+            FirstName = patientData.FirstName ?? string.Empty,
+            LastName = patientData.LastName ?? string.Empty,
+            MiddleName = patientData.MiddleName ?? string.Empty,
+            Address = patientData.Address ?? string.Empty
         };
 
         // Convert date of birth
@@ -166,11 +166,11 @@ public class JsonHL7Converter : IJsonHL7Converter
     {
         var observation = new Observation
         {
-            ObservationId = observationData.ObservationId,
-            Description = observationData.Description,
-            Value = observationData.Value,
-            Units = observationData.Units,
-            ReferenceRange = observationData.ReferenceRange,
+            ObservationId = observationData.ObservationId ?? string.Empty,
+            Description = observationData.Description ?? string.Empty,
+            Value = observationData.Value ?? string.Empty,
+            Units = observationData.Units ?? string.Empty,
+            ReferenceRange = observationData.ReferenceRange ?? string.Empty,
             ValueType = observationData.ValueType ?? "ST" // Default to string type
         };
 

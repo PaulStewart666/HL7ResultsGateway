@@ -42,6 +42,6 @@ public interface ILoggingService
     /// </summary>
     /// <param name="messageFormat">Format string for the scope</param>
     /// <param name="args">Arguments for the format string</param>
-    /// <returns>Disposable scope</returns>
-    IDisposable BeginScope(string messageFormat, params object[] args);
+    /// <returns>Disposable scope, or null if scoping is not supported</returns>
+    IDisposable? BeginScope(string messageFormat, params object[] args);
 }
