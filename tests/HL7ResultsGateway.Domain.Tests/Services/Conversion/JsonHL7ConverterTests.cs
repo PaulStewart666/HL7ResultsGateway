@@ -1,9 +1,12 @@
 using FluentAssertions;
+
 using HL7ResultsGateway.Domain.Entities;
 using HL7ResultsGateway.Domain.Models;
 using HL7ResultsGateway.Domain.Services.Conversion;
 using HL7ResultsGateway.Domain.ValueObjects;
+
 using Moq;
+
 using Xunit;
 
 namespace HL7ResultsGateway.Domain.Tests.Services.Conversion;

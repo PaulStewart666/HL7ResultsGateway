@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+
 using FluentAssertions;
+
 using HL7ResultsGateway.Domain.Models;
+
 using Xunit;
 
 namespace HL7ResultsGateway.Domain.Tests.Models;

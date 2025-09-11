@@ -1,10 +1,13 @@
 using FluentAssertions;
+
 using HL7ResultsGateway.Domain.Entities;
 using HL7ResultsGateway.Domain.Models;
 using HL7ResultsGateway.Domain.ValueObjects;
 using HL7ResultsGateway.Infrastructure.Logging;
 using HL7ResultsGateway.Infrastructure.Services.Conversion;
+
 using Moq;
+
 using Xunit;
 
 namespace HL7ResultsGateway.Infrastructure.Tests.Services.Conversion;
@@ -47,7 +50,7 @@ public class JsonHL7ConverterTests
         result.Patient.LastName.Should().Be("Doe");
         result.Patient.Gender.Should().Be(Gender.Male);
         result.Observations.Should().HaveCount(2);
-        
+
         var firstObs = result.Observations.First();
         firstObs.ObservationId.Should().Be("WBC");
         firstObs.Description.Should().Be("White Blood Cell Count");

@@ -46,7 +46,7 @@ public class JsonHL7Converter : IJsonHL7Converter
                 Observations = ConvertObservations(jsonInput.Observations)
             };
 
-            _logger.LogInformation("JSON to HL7 conversion completed successfully", 
+            _logger.LogInformation("JSON to HL7 conversion completed successfully",
                 new { PatientId = hl7Result.Patient.PatientId, ObservationCount = hl7Result.Observations.Count });
 
             return hl7Result;
@@ -66,12 +66,12 @@ public class JsonHL7Converter : IJsonHL7Converter
         _logger.LogInformation("Starting JSON to HL7 string conversion", new { PatientId = jsonInput.Patient?.PatientId });
 
         var hl7Result = await ConvertToHL7Async(jsonInput);
-        
+
         try
         {
             var hl7String = BuildHL7Message(jsonInput, hl7Result);
-            
-            _logger.LogInformation("JSON to HL7 string conversion completed successfully", 
+
+            _logger.LogInformation("JSON to HL7 string conversion completed successfully",
                 new { MessageLength = hl7String.Length });
 
             return hl7String;
@@ -95,7 +95,7 @@ public class JsonHL7Converter : IJsonHL7Converter
         // Validate using data annotations
         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
         var validationContext = new ValidationContext(jsonInput);
-        
+
         if (!Validator.TryValidateObject(jsonInput, validationContext, validationResults, validateAllProperties: true))
         {
             errors.AddRange(validationResults.Select(vr => vr.ErrorMessage ?? "Validation error"));
@@ -112,7 +112,7 @@ public class JsonHL7Converter : IJsonHL7Converter
             ValidateMessageInfo(jsonInput.MessageInfo, errors);
         }
 
-        var result = errors.Count > 0 
+        var result = errors.Count > 0
             ? Domain.Services.Conversion.ValidationResult.Failure(errors)
             : Domain.Services.Conversion.ValidationResult.Success();
 
@@ -135,7 +135,7 @@ public class JsonHL7Converter : IJsonHL7Converter
         // Convert date of birth
         if (!string.IsNullOrEmpty(patientData.DateOfBirth))
         {
-            if (DateTime.TryParseExact(patientData.DateOfBirth, "yyyy-MM-dd", 
+            if (DateTime.TryParseExact(patientData.DateOfBirth, "yyyy-MM-dd",
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out var dob))
             {
                 patient.DateOfBirth = dob;
@@ -182,7 +182,7 @@ public class JsonHL7Converter : IJsonHL7Converter
                 "N" => ObservationStatus.Normal,
                 "A" => ObservationStatus.Abnormal,
                 "H" => ObservationStatus.Abnormal, // High
-                "L" => ObservationStatus.Abnormal, // Low  
+                "L" => ObservationStatus.Abnormal, // Low
                 "C" => ObservationStatus.Critical,
                 "P" => ObservationStatus.Pending,
                 _ => ObservationStatus.Unknown
@@ -328,7 +328,7 @@ public class JsonHL7Converter : IJsonHL7Converter
         // Validate date format if provided
         if (!string.IsNullOrEmpty(patient.DateOfBirth))
         {
-            if (!DateTime.TryParseExact(patient.DateOfBirth, "yyyy-MM-dd", 
+            if (!DateTime.TryParseExact(patient.DateOfBirth, "yyyy-MM-dd",
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
                 errors.Add("Date of birth must be in yyyy-MM-dd format");
