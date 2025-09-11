@@ -21,7 +21,7 @@ public static class AuthenticationServiceExtensions
         {
             configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
         });
-        
+
         return services;
     }
 }

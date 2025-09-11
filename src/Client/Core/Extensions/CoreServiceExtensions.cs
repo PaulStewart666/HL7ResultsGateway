@@ -20,16 +20,16 @@ public static class CoreServiceExtensions
         // Add configuration services
         services.AddAppConfiguration(configuration);
         services.ValidateConfiguration();
-        
+
         // Add HTTP client services
         services.AddHttpClientServices(configuration);
-        
+
         // Add authentication services
         services.AddAuthenticationServices(configuration);
-        
+
         // Add theme services
         services.AddThemeServices();
-        
+
         return services;
     }
 }

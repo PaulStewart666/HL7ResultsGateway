@@ -1,4 +1,5 @@
 using HL7ResultsGateway.Client.Features.HL7Testing.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HL7ResultsGateway.Client.Features.HL7Testing.Extensions;

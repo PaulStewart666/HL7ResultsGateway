@@ -1,4 +1,5 @@
 using HL7ResultsGateway.Client.Features.JsonToHL7.Services;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

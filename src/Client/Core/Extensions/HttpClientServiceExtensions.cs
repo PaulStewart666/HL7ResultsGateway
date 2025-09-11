@@ -20,7 +20,7 @@ public static class HttpClientServiceExtensions
     public static IServiceCollection AddHttpClientServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Configure default HttpClient for Blazor client
-        services.AddScoped(sp => 
+        services.AddScoped(sp =>
         {
             var hostEnvironment = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
             return new HttpClient { BaseAddress = new Uri(hostEnvironment.BaseAddress) };
@@ -30,14 +30,14 @@ public static class HttpClientServiceExtensions
         services.AddHttpClient("AzureFunctionsApi", (sp, client) =>
         {
             var apiConfig = sp.GetRequiredService<IOptionsSnapshot<ApiConfiguration>>().Value;
-            
+
             client.BaseAddress = new Uri(apiConfig.BaseUrl);
             client.Timeout = apiConfig.Timeout;
-            
+
             // Add default headers
             client.DefaultRequestHeaders.Add("User-Agent", "HL7ResultsGateway-Client/1.0");
         });
-        
+
         return services;
     }
 }

@@ -17,7 +17,7 @@ public static class ThemeServiceExtensions
         // Add theme-related services when they are implemented
         // services.AddScoped<IThemeService, ThemeService>();
         // services.AddScoped<IUserPreferencesService, UserPreferencesService>();
-        
+
         return services;
     }
 }

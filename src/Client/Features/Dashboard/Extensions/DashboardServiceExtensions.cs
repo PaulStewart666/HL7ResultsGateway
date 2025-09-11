@@ -16,7 +16,7 @@ public static class DashboardServiceExtensions
     {
         // Register Dashboard feature services
         // Add dashboard-specific services when implemented
-        
+
         return services;
     }
 }

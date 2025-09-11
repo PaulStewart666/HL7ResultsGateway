@@ -17,7 +17,7 @@ public static class AuthenticationFeatureServiceExtensions
         // Register Authentication feature services
         // Note: Authentication services (MSAL) are registered at the Core level
         // This extension is for feature-specific authentication-related services
-        
+
         return services;
     }
 }
