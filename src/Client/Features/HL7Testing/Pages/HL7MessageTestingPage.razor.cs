@@ -6,8 +6,11 @@ using System.Text.Json;
 
 namespace HL7ResultsGateway.Client.Features.HL7Testing.Pages;
 
-public partial class HL7MessageTestingPage
+public partial class HL7MessageTestingPage : ComponentBase
 {
+    [Inject] private IHL7MessageService HL7MessageService { get; set; } = default!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
     private string _currentMessage = string.Empty;
     private string _currentSource = "Manual Entry";
     private HL7ProcessingResult? _currentResult;
@@ -91,7 +94,7 @@ public partial class HL7MessageTestingPage
         }
 
         // If validation passes, show success message
-        await JSRuntime.InvokeVoidAsync("showToast", "success", "Message validation passed", "The HL7 message format appears to be valid.");
+        await JSRuntime.InvokeVoidAsync("hl7Testing.showToast", "Message validation passed", "success");
     }
 
     private void ClearGlobalError()
@@ -105,7 +108,7 @@ public partial class HL7MessageTestingPage
         StateHasChanged();
 
         // Scroll to results panel
-        JSRuntime.InvokeVoidAsync("scrollToElement", "processing-result-heading");
+        JSRuntime.InvokeVoidAsync("hl7Testing.scrollToElement", "processing-result-heading");
     }
 
     private async Task ExportHistory()
@@ -121,7 +124,7 @@ public partial class HL7MessageTestingPage
         var json = JsonSerializer.Serialize(_processingHistory, options);
         var fileName = $"hl7_testing_history_{DateTime.Now:yyyyMMdd_HHmmss}.json";
 
-        await JSRuntime.InvokeVoidAsync("downloadFile", fileName, "application/json", json);
+        await JSRuntime.InvokeVoidAsync("hl7Testing.downloadFile", fileName, json, "application/json");
     }
 
     private async Task ClearHistory()
