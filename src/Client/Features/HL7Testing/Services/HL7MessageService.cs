@@ -126,11 +126,26 @@ public class HL7MessageService : IHL7MessageService
         return new HL7Result
         {
             MessageType = ParseMessageType(response.MessageType),
-            Patient = new Patient
+            Patient = response.Patient != null ? new Patient
             {
-                PatientId = response.PatientId ?? "Unknown"
-            },
-            Observations = new List<Observation>()
+                PatientId = response.Patient.PatientId,
+                FirstName = response.Patient.FirstName,
+                LastName = response.Patient.LastName,
+                MiddleName = response.Patient.MiddleName,
+                DateOfBirth = response.Patient.DateOfBirth,
+                Gender = ParseGender(response.Patient.Gender),
+                Address = response.Patient.Address
+            } : new Patient { PatientId = "Unknown" },
+            Observations = response.Observations?.Select(obs => new Observation
+            {
+                ObservationId = obs.ObservationId,
+                Description = obs.Description,
+                Value = obs.Value,
+                Units = obs.Units,
+                ReferenceRange = obs.ReferenceRange,
+                Status = ParseObservationStatus(obs.Status),
+                ValueType = obs.ValueType
+            }).ToList() ?? new List<Observation>()
         };
     }
 
@@ -143,6 +158,30 @@ public class HL7MessageService : IHL7MessageService
             "ADT_A03" => Domain.ValueObjects.HL7MessageType.ADT_A03,
             "ORM_O01" => Domain.ValueObjects.HL7MessageType.ORM_O01,
             _ => Domain.ValueObjects.HL7MessageType.Unknown
+        };
+    }
+
+    private static Domain.ValueObjects.Gender ParseGender(string gender)
+    {
+        return gender?.ToUpperInvariant() switch
+        {
+            "M" => Domain.ValueObjects.Gender.Male,
+            "F" => Domain.ValueObjects.Gender.Female,
+            "O" => Domain.ValueObjects.Gender.Other,
+            "U" => Domain.ValueObjects.Gender.Unknown,
+            _ => Domain.ValueObjects.Gender.Unknown
+        };
+    }
+
+    private static Domain.ValueObjects.ObservationStatus ParseObservationStatus(string status)
+    {
+        return status?.ToUpperInvariant() switch
+        {
+            "N" => Domain.ValueObjects.ObservationStatus.Normal,
+            "A" => Domain.ValueObjects.ObservationStatus.Abnormal,
+            "C" => Domain.ValueObjects.ObservationStatus.Critical,
+            "P" => Domain.ValueObjects.ObservationStatus.Pending,
+            _ => Domain.ValueObjects.ObservationStatus.Unknown
         };
     }
 }

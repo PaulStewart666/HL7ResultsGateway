@@ -53,12 +53,39 @@ public class ProcessHL7Message
             if (result.Success)
             {
                 _logger.LogInformation("Successfully processed HL7 message from source: {Source}", source);
+
+                var observations = result.ParsedMessage?.Observations?.Select(obs => new
+                {
+                    observationId = obs.ObservationId,
+                    description = obs.Description,
+                    value = obs.Value,
+                    units = obs.Units,
+                    referenceRange = obs.ReferenceRange,
+                    status = obs.Status.ToString(),
+                    valueType = obs.ValueType,
+                    displayText = !string.IsNullOrEmpty(obs.Description) && !string.IsNullOrEmpty(obs.Value) && !string.IsNullOrEmpty(obs.Units)
+                        ? $"{obs.Description}: {obs.Value} {obs.Units}"
+                        : $"{obs.Description}: {obs.Value}"
+                }).ToList();
+
                 return new OkObjectResult(new
                 {
                     success = true,
                     processedAt = result.ProcessedAt,
+                    requestId = Guid.NewGuid().ToString(), // Generate unique request ID
                     messageType = result.ParsedMessage?.MessageType.ToString(),
-                    patientId = result.ParsedMessage?.Patient?.PatientId,
+                    patient = result.ParsedMessage?.Patient != null ? new
+                    {
+                        patientId = result.ParsedMessage.Patient.PatientId,
+                        firstName = result.ParsedMessage.Patient.FirstName,
+                        lastName = result.ParsedMessage.Patient.LastName,
+                        middleName = result.ParsedMessage.Patient.MiddleName,
+                        fullName = $"{result.ParsedMessage.Patient.FirstName} {result.ParsedMessage.Patient.MiddleName} {result.ParsedMessage.Patient.LastName}".Trim(),
+                        dateOfBirth = result.ParsedMessage.Patient.DateOfBirth,
+                        gender = result.ParsedMessage.Patient.Gender.ToString(),
+                        address = result.ParsedMessage.Patient.Address
+                    } : null,
+                    observations = (object?)observations ?? new List<object>(),
                     observationCount = result.ParsedMessage?.Observations.Count ?? 0
                 });
             }
