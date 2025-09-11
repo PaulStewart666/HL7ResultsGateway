@@ -25,18 +25,18 @@ public partial class HL7MessageInputComponent : ComponentBase
     protected bool _isProcessing;
     protected List<string> _validationErrors = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        _testMessages = await TestMessageRepository.GetAllTestMessagesAsync();
+        _testMessages = TestMessageRepository.GetAllTestMessages().ToList();
         _testMessageCategories = _testMessages.Select(m => m.Category).Distinct().ToList();
         _isProcessing = IsProcessing;
     }
 
     protected async Task OnTestMessageSelected(ChangeEventArgs e)
     {
-        if (e.Value?.ToString() is string messageId && !string.IsNullOrEmpty(messageId))
+        if (e.Value?.ToString() is string messageName && !string.IsNullOrEmpty(messageName))
         {
-            _selectedTestMessage = _testMessages.FirstOrDefault(m => m.Id == messageId);
+            _selectedTestMessage = _testMessages.FirstOrDefault(m => m.Name == messageName);
             if (_selectedTestMessage != null)
             {
                 MessageContent = _selectedTestMessage.Content;
