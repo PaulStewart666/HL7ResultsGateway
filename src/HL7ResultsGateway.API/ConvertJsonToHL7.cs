@@ -1,9 +1,11 @@
 using HL7ResultsGateway.Application.UseCases.ConvertJsonToHL7;
 using HL7ResultsGateway.Domain.Models;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+
 using System.Text.Json;
 
 namespace HL7ResultsGateway.API;
@@ -47,8 +49,8 @@ public class ConvertJsonToHL7
             if (string.IsNullOrWhiteSpace(requestBody))
             {
                 _logger.LogWarning("Received empty request body");
-                return new BadRequestObjectResult(new 
-                { 
+                return new BadRequestObjectResult(new
+                {
                     success = false,
                     error = "Request body cannot be empty. Please provide JSON input data.",
                     processedAt = DateTime.UtcNow
@@ -69,8 +71,8 @@ public class ConvertJsonToHL7
             catch (JsonException ex)
             {
                 _logger.LogWarning("Failed to parse JSON input: {Error}", ex.Message);
-                return new BadRequestObjectResult(new 
-                { 
+                return new BadRequestObjectResult(new
+                {
                     success = false,
                     error = $"Invalid JSON format: {ex.Message}",
                     processedAt = DateTime.UtcNow
@@ -91,7 +93,7 @@ public class ConvertJsonToHL7
                 _logger.LogInformation("Successfully converted JSON to HL7 from source: {Source}", source);
 
                 // Format observations for response
-                var observations = result.ConvertedMessage.Observations?.Select(obs => new
+                var observationsForResponse = result.ConvertedMessage.Observations?.Select(obs => new
                 {
                     observationId = obs.ObservationId,
                     description = obs.Description,
@@ -101,7 +103,7 @@ public class ConvertJsonToHL7
                     status = obs.Status.ToString(),
                     valueType = obs.ValueType,
                     displayText = BuildObservationDisplayText(obs.Description, obs.Value, obs.Units)
-                }).ToList() ?? new List<object>();
+                }).ToArray() ?? Array.Empty<object>();
 
                 // Format patient data for response
                 var patientResponse = result.ConvertedMessage.Patient != null ? new
@@ -125,7 +127,7 @@ public class ConvertJsonToHL7
                     messageType = result.ConvertedMessage.MessageType.ToString(),
                     hl7Message = result.HL7MessageString,
                     patient = patientResponse,
-                    observations = observations,
+                    observations = observationsForResponse,
                     observationCount = result.ConvertedMessage.Observations?.Count ?? 0,
                     validationResult = new
                     {

@@ -1,0 +1,128 @@
+### Test JSON to HL7 Conversion Endpoint
+
+@baseUrl = http://localhost:7071
+
+### Convert JSON to HL7 - Complete Patient Record
+POST {{baseUrl}}/api/hl7/convert
+Content-Type: application/json
+
+{
+    "messageInfo": {
+        "sendingFacility": "TestLab",
+        "receivingFacility": "HIS",
+        "messageControlId": "MSG001",
+        "timestamp": "2024-11-09T12:00:00"
+    },
+    "patient": {
+        "patientId": "P123456",
+        "firstName": "John",
+        "lastName": "Doe",
+        "middleName": "Michael",
+        "dateOfBirth": "1990-05-15",
+        "gender": "M",
+        "address": "123 Main St, Anytown, ST 12345"
+    },
+    "observations": [
+        {
+            "observationId": "CBC",
+            "description": "Complete Blood Count",
+            "value": "Normal",
+            "units": "",
+            "referenceRange": "Normal",
+            "status": "N",
+            "valueType": "TX"
+        },
+        {
+            "observationId": "GLU",
+            "description": "Glucose",
+            "value": "95",
+            "units": "mg/dL",
+            "referenceRange": "70-99",
+            "status": "N",
+            "valueType": "NM"
+        }
+    ]
+}
+
+### Convert JSON to HL7 - Minimal Patient Data
+POST {{baseUrl}}/api/hl7/convert?source=MinimalTest
+Content-Type: application/json
+
+{
+    "messageInfo": {
+        "sendingFacility": "MinimalLab",
+        "messageControlId": "MSG002"
+    },
+    "patient": {
+        "patientId": "P789012",
+        "firstName": "Jane",
+        "lastName": "Smith"
+    },
+    "observations": [
+        {
+            "observationId": "TEMP",
+            "description": "Body Temperature",
+            "value": "98.6",
+            "units": "°F"
+        }
+    ]
+}
+
+### Convert JSON to HL7 - Single Observation
+POST {{baseUrl}}/api/hl7/convert
+Content-Type: application/json
+
+{
+    "messageInfo": {
+        "sendingFacility": "LabCorp",
+        "messageControlId": "MSG003",
+        "timestamp": "2024-11-09T14:30:00"
+    },
+    "patient": {
+        "patientId": "P555123",
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "dateOfBirth": "1985-03-22",
+        "gender": "F"
+    },
+    "observations": [
+        {
+            "observationId": "WBC",
+            "description": "White Blood Cell Count",
+            "value": "7500",
+            "units": "cells/μL",
+            "referenceRange": "4000-11000",
+            "status": "N",
+            "valueType": "NM"
+        }
+    ]
+}
+
+### Convert JSON to HL7 - Invalid Data (Missing Required Fields)
+POST {{baseUrl}}/api/hl7/convert
+Content-Type: application/json
+
+{
+    "messageInfo": {},
+    "patient": {
+        "firstName": "Invalid"
+    },
+    "observations": []
+}
+
+### Convert JSON to HL7 - Empty Body Test
+POST {{baseUrl}}/api/hl7/convert
+Content-Type: application/json
+
+### Convert JSON to HL7 - Malformed JSON Test
+POST {{baseUrl}}/api/hl7/convert
+Content-Type: application/json
+
+{
+    "messageInfo": {
+        "sendingFacility": "TestLab"
+    }
+    "patient": {
+        "patientId": "INVALID"
+    }
+}
