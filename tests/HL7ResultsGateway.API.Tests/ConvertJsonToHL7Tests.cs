@@ -233,7 +233,7 @@ public class ConvertJsonToHL7Tests
     {
         var mockRequest = new Mock<HttpRequest>();
         var bodyStream = new MemoryStream(Encoding.UTF8.GetBytes(requestBody));
-        
+
         mockRequest.Setup(r => r.Body).Returns(bodyStream);
         mockRequest.Setup(r => r.Query).Returns(Mock.Of<IQueryCollection>());
         mockRequest.Setup(r => r.Headers).Returns(Mock.Of<IHeaderDictionary>());
