@@ -78,7 +78,10 @@
                                     MessageContentChanged="OnMessageContentChanged"
                                     MessageSource="@_currentSource"
                                     MessageSourceChanged="OnMessageSourceChanged"
-                                    OnProcessMessageRequested="OnProcessMessageRequested" />
+                                    OnProcessMessage="OnProcessMessage"
+                                    OnClearMessage="OnClearMessage"
+                                    OnValidateMessage="OnValidateMessage"
+                                    IsProcessing="@_isProcessing" />
         </div>
 
         <!-- Results Panel -->

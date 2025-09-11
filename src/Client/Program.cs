@@ -8,7 +8,15 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+// Configure HttpClient for Blazor client (default)
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+// Configure named HttpClient for Azure Functions API
+builder.Services.AddHttpClient("AzureFunctionsApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:7071/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 builder.Services.AddMsalAuthentication(options =>
 {
@@ -16,7 +24,12 @@ builder.Services.AddMsalAuthentication(options =>
 });
 
 // Add HL7 Testing Services
-builder.Services.AddScoped<IHL7MessageService, HL7MessageService>();
+builder.Services.AddScoped<IHL7MessageService>(sp =>
+{
+    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+    var httpClient = httpClientFactory.CreateClient("AzureFunctionsApi");
+    return new HL7MessageService(httpClient);
+});
 builder.Services.AddSingleton<ITestMessageRepository, TestMessageRepository>();
 
 builder.Services.AddThemeService();

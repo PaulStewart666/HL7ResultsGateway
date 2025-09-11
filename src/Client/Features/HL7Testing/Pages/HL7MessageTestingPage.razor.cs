@@ -33,7 +33,7 @@ public partial class HL7MessageTestingPage
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnProcessMessageRequested((string content, string source) request)
+    private async Task OnProcessMessage()
     {
         _isProcessing = true;
         _globalError = null;
@@ -44,8 +44,8 @@ public partial class HL7MessageTestingPage
             await InvokeAsync(StateHasChanged);
 
             var result = await HL7MessageService.ProcessMessageAsync(
-                request.content,
-                request.source,
+                _currentMessage,
+                _currentSource,
                 CancellationToken.None);
 
             _currentResult = result;
@@ -63,6 +63,35 @@ public partial class HL7MessageTestingPage
             _isProcessing = false;
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    private async Task OnClearMessage()
+    {
+        _currentMessage = string.Empty;
+        _currentResult = null;
+        _globalError = null;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnValidateMessage()
+    {
+        // Basic validation - could be enhanced with more sophisticated HL7 validation
+        _globalError = null;
+
+        if (string.IsNullOrWhiteSpace(_currentMessage))
+        {
+            _globalError = "Message content cannot be empty";
+            return;
+        }
+
+        if (!_currentMessage.StartsWith("MSH"))
+        {
+            _globalError = "HL7 messages must start with MSH segment";
+            return;
+        }
+
+        // If validation passes, show success message
+        await JSRuntime.InvokeVoidAsync("showToast", "success", "Message validation passed", "The HL7 message format appears to be valid.");
     }
 
     private void ClearGlobalError()

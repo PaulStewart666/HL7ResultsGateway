@@ -45,10 +45,32 @@ public class HL7MessageService : IHL7MessageService
             content.Headers.Add("X-Source", source);
 
             // Make the API call
-            var response = await _httpClient.PostAsync("/api/hl7/process", content, cancellationToken);
+            var response = await _httpClient.PostAsync("api/hl7/process", content, cancellationToken);
             stopwatch.Stop();
 
+            // Log response details for debugging
+            Console.WriteLine($"Response Status: {response.StatusCode}");
+            Console.WriteLine($"Response Headers: {string.Join(", ", response.Headers.Select(h => $"{h.Key}: {string.Join(",", h.Value)}"))}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                Console.WriteLine($"Error Response: {errorContent}");
+                return new HL7ProcessingResult
+                {
+                    Success = false,
+                    ErrorMessage = $"API request failed with status {response.StatusCode}: {errorContent}",
+                    OriginalMessage = message,
+                    Source = source,
+                    ProcessedAt = DateTime.UtcNow,
+                    ProcessingTime = stopwatch.Elapsed,
+                    RequestId = requestId
+                };
+            }
+
             var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+            Console.WriteLine($"Response JSON: {jsonResponse}");
+
             var apiResponse = JsonSerializer.Deserialize<HL7ApiResponse>(jsonResponse, _jsonOptions);
 
             if (apiResponse == null)
@@ -82,6 +104,7 @@ public class HL7MessageService : IHL7MessageService
         catch (Exception ex)
         {
             stopwatch.Stop();
+            Console.WriteLine($"Exception in ProcessMessageAsync: {ex}");
             return new HL7ProcessingResult
             {
                 Success = false,
