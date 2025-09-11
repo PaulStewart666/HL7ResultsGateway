@@ -6,10 +6,13 @@ using System.Text.Json;
 
 namespace HL7ResultsGateway.Client.Features.HL7Testing.Pages;
 
-public partial class HL7MessageTestingPage : ComponentBase
+public partial class HL7MessageTestingPage : ComponentBase, IAsyncDisposable
 {
     [Inject] private IHL7MessageService HL7MessageService { get; set; } = default!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    private IJSObjectReference? _jsModule;
+    private DotNetObjectReference<HL7MessageTestingPage>? _dotNetReference;
 
     private string _currentMessage = string.Empty;
     private string _currentSource = "Manual Entry";
@@ -22,6 +25,18 @@ public partial class HL7MessageTestingPage : ComponentBase
     {
         // Load any saved history from local storage if needed
         await LoadProcessingHistory();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./Features/HL7Testing/Pages/HL7MessageTestingPage.razor.js");
+
+            _dotNetReference = DotNetObjectReference.Create(this);
+            await _jsModule.InvokeVoidAsync("initialize", _dotNetReference);
+        }
     }
 
     private async Task OnMessageContentChanged(string content)
@@ -94,7 +109,10 @@ public partial class HL7MessageTestingPage : ComponentBase
         }
 
         // If validation passes, show success message
-        await JSRuntime.InvokeVoidAsync("hl7Testing.showToast", "Message validation passed", "success");
+        if (_jsModule != null)
+        {
+            await _jsModule.InvokeVoidAsync("showToast", "Message validation passed", "success");
+        }
     }
 
     private void ClearGlobalError()
@@ -102,13 +120,16 @@ public partial class HL7MessageTestingPage : ComponentBase
         _globalError = null;
     }
 
-    private void ViewResult(HL7ProcessingResult result)
+    private async Task ViewResult(HL7ProcessingResult result)
     {
         _currentResult = result;
         StateHasChanged();
 
         // Scroll to results panel
-        JSRuntime.InvokeVoidAsync("hl7Testing.scrollToElement", "processing-result-heading");
+        if (_jsModule != null)
+        {
+            await _jsModule.InvokeVoidAsync("scrollToElement", "processing-result-heading");
+        }
     }
 
     private async Task ExportHistory()
@@ -124,7 +145,10 @@ public partial class HL7MessageTestingPage : ComponentBase
         var json = JsonSerializer.Serialize(_processingHistory, options);
         var fileName = $"hl7_testing_history_{DateTime.Now:yyyyMMdd_HHmmss}.json";
 
-        await JSRuntime.InvokeVoidAsync("hl7Testing.downloadFile", fileName, json, "application/json");
+        if (_jsModule != null)
+        {
+            await _jsModule.InvokeVoidAsync("downloadFile", fileName, json, "application/json");
+        }
     }
 
     private async Task ClearHistory()
@@ -145,18 +169,40 @@ public partial class HL7MessageTestingPage : ComponentBase
     {
         try
         {
-            var historyJson = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "hl7-testing-history");
-            if (!string.IsNullOrEmpty(historyJson))
+            if (_jsModule != null)
             {
-                var history = JsonSerializer.Deserialize<List<HL7ProcessingResult>>(historyJson, new JsonSerializerOptions
+                var historyData = await _jsModule.InvokeAsync<object?>("loadFromLocalStorage", "hl7-testing-history");
+                if (historyData != null)
                 {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    PropertyNameCaseInsensitive = true
-                });
+                    var historyJson = JsonSerializer.Serialize(historyData);
+                    var history = JsonSerializer.Deserialize<List<HL7ProcessingResult>>(historyJson, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        PropertyNameCaseInsensitive = true
+                    });
 
-                if (history != null)
+                    if (history != null)
+                    {
+                        _processingHistory.AddRange(history);
+                    }
+                }
+            }
+            else
+            {
+                // Fallback to direct localStorage access if module not loaded yet
+                var historyJson = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "hl7-testing-history");
+                if (!string.IsNullOrEmpty(historyJson))
                 {
-                    _processingHistory.AddRange(history);
+                    var history = JsonSerializer.Deserialize<List<HL7ProcessingResult>>(historyJson, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (history != null)
+                    {
+                        _processingHistory.AddRange(history);
+                    }
                 }
             }
         }
@@ -182,13 +228,39 @@ public partial class HL7MessageTestingPage : ComponentBase
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var json = JsonSerializer.Serialize(historyToSave, options);
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "hl7-testing-history", json);
+            if (_jsModule != null)
+            {
+                await _jsModule.InvokeVoidAsync("saveToLocalStorage", "hl7-testing-history", historyToSave);
+            }
+            else
+            {
+                // Fallback to direct localStorage access
+                var json = JsonSerializer.Serialize(historyToSave, options);
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "hl7-testing-history", json);
+            }
         }
         catch (Exception)
         {
             // If saving fails, continue without persistence
             // Could log this error in a real application
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_jsModule != null)
+        {
+            try
+            {
+                await _jsModule.InvokeVoidAsync("dispose");
+                await _jsModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // Expected when the circuit is disconnected
+            }
+        }
+
+        _dotNetReference?.Dispose();
     }
 }
