@@ -19,5 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HL7ResultsGateway.Application\HL7ResultsGateway.Application.csproj" />
     <ProjectReference Include="..\HL7ResultsGateway.Domain\HL7ResultsGateway.Domain.csproj" />
+    <ProjectReference Include="..\HL7ResultsGateway.Infrastructure\HL7ResultsGateway.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

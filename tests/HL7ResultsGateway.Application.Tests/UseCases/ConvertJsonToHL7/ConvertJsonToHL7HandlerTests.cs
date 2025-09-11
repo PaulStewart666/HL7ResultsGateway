@@ -1,13 +1,17 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using HL7ResultsGateway.Application.UseCases.ConvertJsonToHL7;
 using HL7ResultsGateway.Domain.Entities;
 using HL7ResultsGateway.Domain.Models;
 using HL7ResultsGateway.Domain.Services.Conversion;
 using HL7ResultsGateway.Domain.ValueObjects;
+
 using Moq;
+
 using Xunit;
 
 namespace HL7ResultsGateway.Application.Tests.UseCases.ConvertJsonToHL7;

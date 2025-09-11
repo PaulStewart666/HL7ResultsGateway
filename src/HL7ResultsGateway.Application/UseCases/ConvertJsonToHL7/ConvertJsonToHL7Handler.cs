@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+
 using HL7ResultsGateway.Domain.Services.Conversion;
 
 namespace HL7ResultsGateway.Application.UseCases.ConvertJsonToHL7;
