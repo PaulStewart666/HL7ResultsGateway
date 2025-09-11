@@ -109,7 +109,7 @@ export function highlightElement(elementId, duration = 2000) {
 
     // Add highlight class
     element.classList.add('highlight-animation');
-    
+
     // Remove highlight after duration
     setTimeout(() => {
         element.classList.remove('highlight-animation');
@@ -120,10 +120,10 @@ export function highlightElement(elementId, duration = 2000) {
 export function initialize(dotNetHelper) {
     // Store reference for any callbacks if needed
     window.hl7MessageTestingPageHelper = dotNetHelper;
-    
+
     // Set up any page-specific event listeners
     setupPageEventListeners();
-    
+
     return Promise.resolve();
 }
 
@@ -133,10 +133,10 @@ export function dispose() {
     if (window.hl7MessageTestingPageHelper) {
         delete window.hl7MessageTestingPageHelper;
     }
-    
+
     // Clean up event listeners
     cleanupPageEventListeners();
-    
+
     return Promise.resolve();
 }
 

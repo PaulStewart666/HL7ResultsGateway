@@ -48,7 +48,7 @@ export function highlightHL7Syntax(textareaId) {
 
     // Add syntax highlighting class for potential CSS styling
     textarea.classList.add('hl7-syntax-highlighted');
-    
+
     // Could be enhanced with more sophisticated syntax highlighting
     // For now, just add visual cues via CSS classes
 }
@@ -59,12 +59,12 @@ export function autoResizeTextarea(textareaId) {
 
     // Reset height to auto to get the correct scrollHeight
     textarea.style.height = 'auto';
-    
+
     // Set height to scrollHeight with some padding
     const maxHeight = 400; // Maximum height in pixels
     const newHeight = Math.min(textarea.scrollHeight, maxHeight);
     textarea.style.height = newHeight + 'px';
-    
+
     // Add scrollbar if content exceeds max height
     textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'scroll' : 'hidden';
 }
@@ -83,18 +83,18 @@ export function showValidationErrors(errors, containerId) {
 
     // Show container
     container.style.display = 'block';
-    
+
     // Create error list
     const errorList = document.createElement('ul');
     errorList.className = 'list-unstyled mb-0';
-    
+
     errors.forEach(error => {
         const li = document.createElement('li');
         li.className = 'text-danger small';
         li.innerHTML = `<i class="fa fa-exclamation-triangle me-1"></i>${error}`;
         errorList.appendChild(li);
     });
-    
+
     container.appendChild(errorList);
 }
 
