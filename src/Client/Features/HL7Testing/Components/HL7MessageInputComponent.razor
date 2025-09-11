@@ -1,0 +1,217 @@
+@using HL7ResultsGateway.Client.Features.HL7Testing.Models
+@using HL7ResultsGateway.Client.Features.HL7Testing.Services
+@inject ITestMessageRepository TestMessageRepository
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0" id="message-input-heading">
+            <i class="fa fa-edit me-2" aria-hidden="true"></i>
+            HL7 Message Input
+        </h5>
+    </div>
+
+    <div class="card-body" role="region" aria-labelledby="message-input-heading">
+        <!-- Test Message Selection -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="test-message-select" class="form-label">
+                    <i class="fa fa-flask me-1" aria-hidden="true"></i>
+                    Select Test Message
+                </label>
+                <select id="test-message-select" class="form-select" @onchange="OnTestMessageSelected"
+                        aria-describedby="test-message-help">
+                    <option value="">-- Choose a test message --</option>
+                    @foreach (var category in testMessageCategories)
+                    {
+                        <optgroup label="@category">
+                            @foreach (var testMessage in testMessages.Where(m => m.Category == category))
+                            {
+                                <option value="@testMessage.Name"
+                                        selected="@(selectedTestMessage?.Name == testMessage.Name)">
+                                    @testMessage.Name
+                                </option>
+                            }
+                        </optgroup>
+                    }
+                </select>
+                <div id="test-message-help" class="form-text">
+                    Choose a predefined test message or enter your own below.
+                </div>
+            </div>
+
+            @if (selectedTestMessage != null)
+            {
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body py-2">
+                            <h6 class="card-subtitle mb-1 text-muted">@selectedTestMessage.Category</h6>
+                            <p class="card-text small mb-1">@selectedTestMessage.Description</p>
+                            <small class="text-muted">@selectedTestMessage.MessageType</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Message Source Indicator -->
+        <div class="mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge @(MessageSource == "test" ? "bg-info" : "bg-secondary")">
+                    <i class="fa @(MessageSource == "test" ? "fa-flask" : "fa-edit") me-1" aria-hidden="true"></i>
+                    @(MessageSource == "test" ? "Test Message" : "Manual Input")
+                </span>
+                @if (MessageSource == "test" && selectedTestMessage != null)
+                {
+                    <small class="text-muted">Using: @selectedTestMessage.Name</small>
+                }
+            </div>
+        </div>
+
+        <!-- Message Content Textarea -->
+        <div class="mb-3">
+            <label for="message-content" class="form-label">
+                <i class="fa fa-code me-1" aria-hidden="true"></i>
+                HL7 Message Content
+                <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <textarea id="message-content" class="form-control font-monospace"
+                      rows="15"
+                      @bind="MessageContent"
+                      @oninput="OnMessageContentChanged"
+                      placeholder="Enter HL7 message content here...
+
+Example:
+MSH|^~\&|LAB|HOSPITAL|EMR|HOSPITAL|20231201120000||ORU^R01|MSG123|P|2.5
+PID|||12345||Doe^John^M||19800101|M|||"
+                      aria-describedby="message-content-help message-content-validation"
+                      required></textarea>
+            <div id="message-content-help" class="form-text">
+                Enter the complete HL7 message with all segments. Use standard HL7 delimiters (|, ^, ~, \, &).
+            </div>
+        </div>
+
+        <!-- Validation Errors -->
+        @if (validationErrors.Any())
+        {
+            <div id="message-content-validation" class="alert alert-warning" role="alert">
+                <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                <strong>Validation Issues:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach (var error in validationErrors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="d-flex flex-wrap gap-2 justify-content-between">
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary"
+                        @onclick="@(() => OnProcessMessage.InvokeAsync())"
+                        disabled="@(isProcessing || string.IsNullOrWhiteSpace(MessageContent))"
+                        aria-describedby="process-button-help">
+                    @if (isProcessing)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    }
+                    else
+                    {
+                        <i class="fa fa-play me-2" aria-hidden="true"></i>
+                    }
+                    @(isProcessing ? "Processing..." : "Process Message")
+                </button>
+
+                <button type="button" class="btn btn-outline-secondary"
+                        @onclick="@(() => OnClearMessage.InvokeAsync())"
+                        disabled="@isProcessing"
+                        aria-label="Clear message content">
+                    <i class="fa fa-trash me-2" aria-hidden="true"></i>
+                    Clear
+                </button>
+            </div>
+
+            <button type="button" class="btn btn-outline-info"
+                    @onclick="@(() => OnValidateMessage.InvokeAsync())"
+                    disabled="@(isProcessing || string.IsNullOrWhiteSpace(MessageContent))"
+                    aria-describedby="validate-button-help">
+                <i class="fa fa-check-circle me-2" aria-hidden="true"></i>
+                Validate
+            </button>
+        </div>
+
+        <div class="mt-2">
+            <small id="process-button-help" class="text-muted d-block">
+                Process the HL7 message through the parsing service to extract patient and observation data.
+            </small>
+            <small id="validate-button-help" class="text-muted d-block">
+                Validate the message format and structure before processing.
+            </small>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string MessageContent { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> MessageContentChanged { get; set; }
+
+    [Parameter] public string MessageSource { get; set; } = "manual";
+    [Parameter] public EventCallback<string> MessageSourceChanged { get; set; }
+
+    [Parameter] public EventCallback OnProcessMessage { get; set; }
+    [Parameter] public EventCallback OnClearMessage { get; set; }
+    [Parameter] public EventCallback OnValidateMessage { get; set; }
+    [Parameter] public bool IsProcessing { get; set; }
+
+    private List<HL7TestMessage> testMessages = new();
+    private List<string> testMessageCategories = new();
+    private HL7TestMessage? selectedTestMessage;
+    private bool isProcessing;
+    private List<string> validationErrors = new();
+
+    protected override void OnInitialized()
+    {
+        testMessages = TestMessageRepository.GetAllTestMessages().ToList();
+        testMessageCategories = testMessages.Select(m => m.Category).Distinct().ToList();
+        isProcessing = IsProcessing;
+    }
+
+    private async Task OnTestMessageSelected(ChangeEventArgs e)
+    {
+        if (e.Value?.ToString() is string messageName && !string.IsNullOrEmpty(messageName))
+        {
+            selectedTestMessage = testMessages.FirstOrDefault(m => m.Name == messageName);
+            if (selectedTestMessage != null)
+            {
+                MessageContent = selectedTestMessage.Content;
+                await MessageContentChanged.InvokeAsync(MessageContent);
+                MessageSource = "test";
+                await MessageSourceChanged.InvokeAsync(MessageSource);
+                validationErrors.Clear();
+            }
+        }
+    }
+
+    private async Task OnMessageContentChanged(ChangeEventArgs e)
+    {
+        MessageContent = e.Value?.ToString() ?? string.Empty;
+        await MessageContentChanged.InvokeAsync(MessageContent);
+
+        // Clear test message selection when manual content changes
+        if (selectedTestMessage != null && MessageContent != selectedTestMessage.Content)
+        {
+            selectedTestMessage = null;
+            MessageSource = "manual";
+            await MessageSourceChanged.InvokeAsync(MessageSource);
+        }
+
+        // Clear validation errors on content change
+        validationErrors.Clear();
+    }
+
+    protected override void OnParametersSet()
+    {
+        isProcessing = IsProcessing;
+    }
+}

@@ -1,0 +1,200 @@
+@using HL7ResultsGateway.Client.Features.HL7Testing.Models
+@using HL7ResultsGateway.Domain.Entities
+@using HL7ResultsGateway.Domain.ValueObjects
+
+@if (Result != null)
+{
+    <div class="card mt-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0" id="processing-result-heading">
+                <i class="fa @(_getStatusIcon()) me-2" aria-hidden="true"></i>
+                Processing Result
+            </h5>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge @(_getStatusBadgeClass())" role="status">
+                    @(Result.Success ? "Success" : "Error")
+                </span>
+                <small class="text-muted">@Result.ProcessedAt.ToString("yyyy-MM-dd HH:mm:ss") UTC</small>
+            </div>
+        </div>
+
+        <div class="card-body" role="region" aria-labelledby="processing-result-heading">
+            <!-- Summary Information -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa fa-clock-o me-2 text-muted" aria-hidden="true"></i>
+                        <span><strong>Processing Time:</strong> @Result.ProcessingTime.TotalMilliseconds ms</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa fa-tag me-2 text-muted" aria-hidden="true"></i>
+                        <span><strong>Source:</strong> @Result.Source</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-id-card-o me-2 text-muted" aria-hidden="true"></i>
+                        <span><strong>Request ID:</strong> <code>@Result.RequestId</code></span>
+                        <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="CopyRequestId"
+                                title="Copy Request ID" aria-label="Copy Request ID to clipboard">
+                            <i class="fa fa-copy" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+
+                @if (Result.ParsedMessage != null)
+                {
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa fa-file-text-o me-2 text-muted" aria-hidden="true"></i>
+                            <span><strong>Message Type:</strong> @Result.ParsedMessage.MessageType</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa fa-user me-2 text-muted" aria-hidden="true"></i>
+                            <span><strong>Patient ID:</strong> @Result.ParsedMessage.Patient?.PatientId</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-list-ol me-2 text-muted" aria-hidden="true"></i>
+                            <span><strong>Observations:</strong> @(Result.ParsedMessage.Observations?.Count ?? 0)</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (!Result.Success && !string.IsNullOrEmpty(Result.ErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                    <strong>Error:</strong> @Result.ErrorMessage
+                </div>
+            }
+
+            @if (Result.ParsedMessage != null)
+            {
+                <div class="row">
+                    <!-- Patient Information -->
+                    @if (Result.ParsedMessage.Patient != null)
+                    {
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fa fa-user me-2" aria-hidden="true"></i>
+                                Patient Information
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm" aria-label="Patient information">
+                                    <tbody>
+                                        @if (!string.IsNullOrEmpty(Result.ParsedMessage.Patient.PatientId))
+                                        {
+                                            <tr>
+                                                <th scope="row">Patient ID</th>
+                                                <td><code>@Result.ParsedMessage.Patient.PatientId</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Result.ParsedMessage.Patient.FirstName))
+                                        {
+                                            <tr>
+                                                <th scope="row">First Name</th>
+                                                <td>@Result.ParsedMessage.Patient.FirstName</td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Result.ParsedMessage.Patient.LastName))
+                                        {
+                                            <tr>
+                                                <th scope="row">Last Name</th>
+                                                <td>@Result.ParsedMessage.Patient.LastName</td>
+                                            </tr>
+                                        }
+                                        @if (Result.ParsedMessage.Patient.DateOfBirth != DateTime.MinValue)
+                                        {
+                                            <tr>
+                                                <th scope="row">Date of Birth</th>
+                                                <td>@Result.ParsedMessage.Patient.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                                            </tr>
+                                        }
+                                        @if (Result.ParsedMessage.Patient.Gender != Gender.Unknown)
+                                        {
+                                            <tr>
+                                                <th scope="row">Gender</th>
+                                                <td>@Result.ParsedMessage.Patient.Gender</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Observations -->
+                    @if (Result.ParsedMessage.Observations?.Any() == true)
+                    {
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fa fa-flask me-2" aria-hidden="true"></i>
+                                Observations (@Result.ParsedMessage.Observations.Count())
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm" aria-label="Observation results">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Value</th>
+                                            <th scope="col">Units</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var observation in Result.ParsedMessage.Observations.Take(10))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(observation.Description))
+                                                    {
+                                                        <span title="@observation.ObservationId">@observation.Description</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <code>@observation.ObservationId</code>
+                                                    }
+                                                </td>
+                                                <td>@observation.Value</td>
+                                                <td>@observation.Units</td>
+                                                <td>
+                                                    <span class="badge @(_getObservationStatusBadgeClass(observation.Status))">
+                                                        @observation.Status
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (Result.ParsedMessage.Observations.Count() > 10)
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    <i class="fa fa-ellipsis-h me-1" aria-hidden="true"></i>
+                                                    and @(Result.ParsedMessage.Observations.Count() - 10) more observation(s)
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button class="btn btn-outline-primary" @onclick="ExportAsJson"
+                        aria-label="Export result as JSON file">
+                    <i class="fa fa-download me-2" aria-hidden="true"></i>
+                    Export JSON
+                </button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center text-muted py-4">
+        <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+        No processing result to display. Submit an HL7 message to see results here.
+    </div>
+}

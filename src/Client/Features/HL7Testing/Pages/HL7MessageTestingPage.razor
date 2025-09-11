@@ -1,0 +1,202 @@
+@page "/hl7/testing"
+@page "/hl7/test"
+@using HL7ResultsGateway.Client.Features.HL7Testing.Components
+@using HL7ResultsGateway.Client.Features.HL7Testing.Models
+@using HL7ResultsGateway.Client.Features.HL7Testing.Services
+@inject IHL7MessageService HL7MessageService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>HL7 Message Testing - HL7 Results Gateway</PageTitle>
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="h2 mb-2">
+                        <i class="fa fa-flask me-3" aria-hidden="true"></i>
+                        HL7 Message Testing
+                    </h1>
+                    <p class="text-muted mb-0">
+                        Test HL7 message processing using predefined examples or your own messages.
+                        Messages are sent to the Azure Functions API for parsing and validation.
+                    </p>
+                </div>
+                <div class="text-end">
+                    @if (_processingHistory.Any())
+                    {
+                        <div class="text-muted small">
+                            <div>Tests Run: <strong>@_processingHistory.Count</strong></div>
+                            <div>Success Rate: <strong>@($"{_getSuccessRate():F1}%")</strong></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Status -->
+    @if (_isProcessing)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info d-flex align-items-center" role="status" aria-live="polite">
+                    <div class="spinner-border spinner-border-sm me-3" role="status" aria-hidden="true"></div>
+                    <div class="flex-grow-1">
+                        <strong>Processing HL7 Message...</strong>
+                        <div class="small text-muted">Sending message to API and parsing response...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Global Error Alert -->
+    @if (!string.IsNullOrEmpty(_globalError))
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="fa fa-exclamation-triangle mt-1 me-2" aria-hidden="true"></i>
+                        <div class="flex-grow-1">
+                            <strong>Processing Error</strong>
+                            <div class="mt-1">@_globalError</div>
+                        </div>
+                        <button type="button" class="btn-close" @onclick="ClearGlobalError" aria-label="Close alert"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Input Panel -->
+        <div class="col-lg-6">
+            <HL7MessageInputComponent MessageContent="@_currentMessage"
+                                    MessageContentChanged="OnMessageContentChanged"
+                                    MessageSource="@_currentSource"
+                                    MessageSourceChanged="OnMessageSourceChanged"
+                                    OnProcessMessageRequested="OnProcessMessageRequested" />
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-lg-6">
+            @if (_currentResult != null)
+            {
+                <HL7ProcessingResultComponent Result="@_currentResult" />
+            }
+            else if (!_isProcessing)
+            {
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <div class="text-muted">
+                            <i class="fa fa-info-circle fa-3x mb-3" aria-hidden="true"></i>
+                            <h5>Ready to Test HL7 Messages</h5>
+                            <p class="mb-0">
+                                Select a predefined test message or enter your own HL7 content,
+                                then click "Process Message" to see the results.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Processing History -->
+    @if (_processingHistory.Any())
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title mb-0">
+                            <i class="fa fa-history me-2" aria-hidden="true"></i>
+                            Processing History
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-sm"
+                                    @onclick="ExportHistory"
+                                    aria-label="Export processing history">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                                Export
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    @onclick="ClearHistory"
+                                    aria-label="Clear processing history">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" aria-label="HL7 message processing history">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Timestamp</th>
+                                        <th scope="col">Source</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Message Type</th>
+                                        <th scope="col">Processing Time</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var result in _processingHistory.OrderByDescending(h => h.ProcessedAt).Take(20))
+                                    {
+                                        <tr class="@(result.Success ? "" : "table-danger")">
+                                            <td>
+                                                <small>@result.ProcessedAt.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                                            </td>
+                                            <td>@result.Source</td>
+                                            <td>
+                                                <span class="badge @(result.Success ? "bg-success" : "bg-danger")">
+                                                    @(result.Success ? "Success" : "Error")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (result.ParsedMessage != null)
+                                                {
+                                                    <span>@result.ParsedMessage.MessageType</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>@result.ProcessingTime.TotalMilliseconds ms</small>
+                                            </td>
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-outline-primary btn-sm"
+                                                        @onclick="() => ViewResult(result)"
+                                                        aria-label="View details for this result">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (_processingHistory.Count > 20)
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">
+                                                ... and @(_processingHistory.Count - 20) more results
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
