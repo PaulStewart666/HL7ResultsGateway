@@ -1,0 +1,418 @@
+@using HL7ResultsGateway.Client.Features.JsonToHL7.Models
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fa fa-edit me-2" aria-hidden="true"></i>
+            JSON Input
+        </h5>
+    </div>
+    <div class="card-body">
+        <EditForm Model="@Request" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <!-- Template Selection -->
+            <div class="mb-4">
+                <label for="template-select" class="form-label fw-bold">Quick Start Templates</label>
+                <div class="input-group">
+                    <select id="template-select" class="form-select" @onchange="LoadTemplate">
+                        <option value="">-- Select a template --</option>
+                        @foreach (var template in JsonTestTemplate.PredefinedTemplates)
+                        {
+                            <option value="@template.Name">@template.Name - @template.Description</option>
+                        }
+                    </select>
+                    <button type="button" class="btn btn-outline-info" @onclick="ShowTemplateHelp" aria-label="Template help">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="form-text">Choose a predefined template to get started quickly, or build your own from scratch.</div>
+            </div>
+
+            <div class="row">
+                <!-- Patient Information -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fa fa-user me-1" aria-hidden="true"></i>
+                                Patient Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="patientId" class="form-label">Patient ID <span class="text-danger">*</span></label>
+                                    <InputText id="patientId" @bind-Value="Request.Patient.PatientId" class="form-control" placeholder="P12345" />
+                                    <ValidationMessage For="@(() => Request.Patient.PatientId)" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
+                                    <InputSelect id="gender" @bind-Value="Request.Patient.Gender" class="form-select">
+                                        <option value="U">Unknown</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O">Other</option>
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => Request.Patient.Gender)" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                    <InputText id="firstName" @bind-Value="Request.Patient.FirstName" class="form-control" placeholder="John" />
+                                    <ValidationMessage For="@(() => Request.Patient.FirstName)" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="middleName" class="form-label">Middle Name</label>
+                                    <InputText id="middleName" @bind-Value="Request.Patient.MiddleName" class="form-control" placeholder="Michael" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <InputText id="lastName" @bind-Value="Request.Patient.LastName" class="form-control" placeholder="Doe" />
+                                    <ValidationMessage For="@(() => Request.Patient.LastName)" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="dateOfBirth" class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                                    <InputDate id="dateOfBirth" @bind-Value="Request.Patient.DateOfBirth" class="form-control" />
+                                    <ValidationMessage For="@(() => Request.Patient.DateOfBirth)" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <InputText id="phoneNumber" @bind-Value="Request.Patient.PhoneNumber" class="form-control" placeholder="(555) 123-4567" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <InputTextArea id="address" @bind-Value="Request.Patient.Address" class="form-control" rows="2" placeholder="123 Main St, Anytown, AN 12345" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Information -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fa fa-envelope me-1" aria-hidden="true"></i>
+                                Message Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="sendingApp" class="form-label">Sending Application</label>
+                                    <InputText id="sendingApp" @bind-Value="Request.MessageInfo.SendingApplication" class="form-control" placeholder="LAB_SYSTEM" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="sendingFacility" class="form-label">Sending Facility</label>
+                                    <InputText id="sendingFacility" @bind-Value="Request.MessageInfo.SendingFacility" class="form-control" placeholder="Central Lab" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="receivingApp" class="form-label">Receiving Application</label>
+                                    <InputText id="receivingApp" @bind-Value="Request.MessageInfo.ReceivingApplication" class="form-control" placeholder="EMR" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="receivingFacility" class="form-label">Receiving Facility</label>
+                                    <InputText id="receivingFacility" @bind-Value="Request.MessageInfo.ReceivingFacility" class="form-control" placeholder="General Hospital" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="messageControlId" class="form-label">Message Control ID</label>
+                                    <div class="input-group">
+                                        <InputText id="messageControlId" @bind-Value="Request.MessageInfo.MessageControlId" class="form-control" />
+                                        <button type="button" class="btn btn-outline-secondary" @onclick="GenerateNewControlId" aria-label="Generate new control ID">
+                                            <i class="fa fa-refresh" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="timestamp" class="form-label">Timestamp</label>
+                                    <InputDate Type="InputDateType.DateTimeLocal" id="timestamp" @bind-Value="Request.MessageInfo.Timestamp" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Observations Section -->
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="fa fa-flask me-1" aria-hidden="true"></i>
+                        Observations (@Request.Observations.Count)
+                    </h6>
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="AddObservation">
+                        <i class="fa fa-plus me-1" aria-hidden="true"></i>
+                        Add Observation
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (!Request.Observations.Any())
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="fa fa-flask fa-2x mb-2" aria-hidden="true"></i>
+                            <p class="mb-0">No observations yet. Click "Add Observation" to get started.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < Request.Observations.Count; i++)
+                        {
+                            var index = i; // Capture for closure
+                            var obs = Request.Observations[i];
+
+                            <div class="card mb-3 border-start border-primary border-3">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                                    <h6 class="mb-0">Observation #@(index + 1)</h6>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => RemoveObservation(index)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        Remove
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Observation ID <span class="text-danger">*</span></label>
+                                            <InputText @bind-Value="obs.ObservationId" class="form-control" placeholder="GLU" />
+                                            <ValidationMessage For="@(() => obs.ObservationId)" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                                            <InputText @bind-Value="obs.Description" class="form-control" placeholder="Glucose" />
+                                            <ValidationMessage For="@(() => obs.Description)" />
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Status</label>
+                                            <InputSelect @bind-Value="obs.Status" class="form-select">
+                                                <option value="N">Normal</option>
+                                                <option value="A">Abnormal</option>
+                                                <option value="C">Critical</option>
+                                                <option value="P">Pending</option>
+                                            </InputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Value <span class="text-danger">*</span></label>
+                                            <InputText @bind-Value="obs.Value" class="form-control" placeholder="95" />
+                                            <ValidationMessage For="@(() => obs.Value)" />
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Units</label>
+                                            <InputText @bind-Value="obs.Units" class="form-control" placeholder="mg/dL" />
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Reference Range</label>
+                                            <InputText @bind-Value="obs.ReferenceRange" class="form-control" placeholder="70-99" />
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Value Type</label>
+                                            <InputSelect @bind-Value="obs.ValueType" class="form-select">
+                                                <option value="ST">String Text</option>
+                                                <option value="NM">Numeric</option>
+                                                <option value="CE">Coded Entry</option>
+                                            </InputSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-outline-secondary" @onclick="ClearAll" disabled="@IsProcessing">
+                    <i class="fa fa-trash me-1" aria-hidden="true"></i>
+                    Clear All
+                </button>
+                <button type="button" class="btn btn-outline-info" @onclick="ValidateInput" disabled="@IsProcessing">
+                    <i class="fa fa-check me-1" aria-hidden="true"></i>
+                    Validate
+                </button>
+                <button type="submit" class="btn btn-primary" disabled="@IsProcessing">
+                    @if (IsProcessing)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Converting...</span>
+                    }
+                    else
+                    {
+                        <i class="fa fa-cogs me-1" aria-hidden="true"></i>
+                        <span>Convert to HL7</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public JsonToHL7Request Request { get; set; } = new();
+    [Parameter] public EventCallback<JsonToHL7Request> RequestChanged { get; set; }
+    [Parameter] public EventCallback<JsonToHL7Request> OnConvertRequest { get; set; }
+    [Parameter] public EventCallback OnValidateRequest { get; set; }
+    [Parameter] public bool IsProcessing { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Ensure we have at least one observation for better UX
+        if (!Request.Observations.Any())
+        {
+            AddObservation();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await OnConvertRequest.InvokeAsync(Request);
+    }
+
+    private async Task LoadTemplate(ChangeEventArgs e)
+    {
+        var templateName = e.Value?.ToString();
+        if (string.IsNullOrEmpty(templateName))
+            return;
+
+        var template = JsonTestTemplate.PredefinedTemplates.FirstOrDefault(t => t.Name == templateName);
+        if (template != null)
+        {
+            Request.Patient = new JsonPatientData
+            {
+                PatientId = template.Template.Patient.PatientId,
+                FirstName = template.Template.Patient.FirstName,
+                LastName = template.Template.Patient.LastName,
+                MiddleName = template.Template.Patient.MiddleName,
+                DateOfBirth = template.Template.Patient.DateOfBirth,
+                Gender = template.Template.Patient.Gender,
+                Address = template.Template.Patient.Address,
+                PhoneNumber = template.Template.Patient.PhoneNumber
+            };
+
+            Request.MessageInfo = new JsonMessageInfo
+            {
+                SendingApplication = template.Template.MessageInfo.SendingApplication,
+                SendingFacility = template.Template.MessageInfo.SendingFacility,
+                ReceivingApplication = template.Template.MessageInfo.ReceivingApplication,
+                ReceivingFacility = template.Template.MessageInfo.ReceivingFacility,
+                MessageControlId = Guid.NewGuid().ToString(),
+                Timestamp = DateTime.Now
+            };
+
+            Request.Observations.Clear();
+            foreach (var obs in template.Template.Observations)
+            {
+                Request.Observations.Add(new JsonObservationData
+                {
+                    ObservationId = obs.ObservationId,
+                    Description = obs.Description,
+                    Value = obs.Value,
+                    Units = obs.Units,
+                    ReferenceRange = obs.ReferenceRange,
+                    Status = obs.Status,
+                    ValueType = obs.ValueType
+                });
+            }
+
+            await RequestChanged.InvokeAsync(Request);
+            StateHasChanged();
+        }
+    }
+
+    private async Task ShowTemplateHelp()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", "Templates provide pre-configured patient and observation data for common laboratory scenarios. They help you quickly test the JSON to HL7 conversion without manual data entry.");
+    }
+
+    private void AddObservation()
+    {
+        Request.Observations.Add(new JsonObservationData());
+        StateHasChanged();
+    }
+
+    private void RemoveObservation(int index)
+    {
+        if (index >= 0 && index < Request.Observations.Count)
+        {
+            Request.Observations.RemoveAt(index);
+            StateHasChanged();
+        }
+    }
+
+    private void GenerateNewControlId()
+    {
+        Request.MessageInfo.MessageControlId = Guid.NewGuid().ToString();
+        StateHasChanged();
+    }
+
+    private void ClearAll()
+    {
+        Request.Patient = new JsonPatientData();
+        Request.MessageInfo = new JsonMessageInfo();
+        Request.Observations.Clear();
+        AddObservation(); // Add one empty observation
+        StateHasChanged();
+    }
+
+    private async Task ValidateInput()
+    {
+        await OnValidateRequest.InvokeAsync();
+    }
+
+    public void LoadTemplate(string templateName)
+    {
+        var template = JsonTestTemplate.PredefinedTemplates.FirstOrDefault(t => t.Name.Contains(templateName, StringComparison.OrdinalIgnoreCase));
+        if (template != null)
+        {
+            Request.Patient = new JsonPatientData
+            {
+                PatientId = template.Template.Patient.PatientId,
+                FirstName = template.Template.Patient.FirstName,
+                LastName = template.Template.Patient.LastName,
+                MiddleName = template.Template.Patient.MiddleName,
+                DateOfBirth = template.Template.Patient.DateOfBirth,
+                Gender = template.Template.Patient.Gender,
+                Address = template.Template.Patient.Address,
+                PhoneNumber = template.Template.Patient.PhoneNumber
+            };
+
+            Request.MessageInfo = new JsonMessageInfo
+            {
+                SendingApplication = template.Template.MessageInfo.SendingApplication,
+                SendingFacility = template.Template.MessageInfo.SendingFacility,
+                ReceivingApplication = template.Template.MessageInfo.ReceivingApplication,
+                ReceivingFacility = template.Template.MessageInfo.ReceivingFacility,
+                MessageControlId = Guid.NewGuid().ToString(),
+                Timestamp = DateTime.Now
+            };
+
+            Request.Observations.Clear();
+            foreach (var obs in template.Template.Observations)
+            {
+                Request.Observations.Add(new JsonObservationData
+                {
+                    ObservationId = obs.ObservationId,
+                    Description = obs.Description,
+                    Value = obs.Value,
+                    Units = obs.Units,
+                    ReferenceRange = obs.ReferenceRange,
+                    Status = obs.Status,
+                    ValueType = obs.ValueType
+                });
+            }
+
+            StateHasChanged();
+        }
+    }
+}

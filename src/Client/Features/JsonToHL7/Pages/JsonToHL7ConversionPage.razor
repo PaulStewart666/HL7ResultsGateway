@@ -1,0 +1,255 @@
+@page "/json-to-hl7"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using HL7ResultsGateway.Client.Features.JsonToHL7.Models
+@using HL7ResultsGateway.Client.Features.JsonToHL7.Services
+@using HL7ResultsGateway.Client.Features.JsonToHL7.Components
+@inject JsonToHL7Service ConversionService
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fa fa-exchange fa-2x text-primary" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h1 class="h2 mb-1">JSON to HL7 Converter</h1>
+                    <p class="text-muted mb-0">
+                        Convert patient and laboratory data from JSON format to HL7 v2 messages (ORU^R01).
+                        <a href="#" class="text-decoration-none ms-2" @onclick="ShowHelp" @onclick:preventDefault="true">
+                            <i class="fa fa-question-circle" aria-hidden="true"></i>
+                            Need help?
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    @if (ShowHelpModal)
+    {
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="helpModalLabel">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            How to Use JSON to HL7 Converter
+                        </h5>
+                        <button type="button" class="btn-close" @onclick="CloseHelp" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fa fa-play-circle me-1" aria-hidden="true"></i> Getting Started</h6>
+                                <ol>
+                                    <li><strong>Choose a template</strong> from the dropdown for quick testing</li>
+                                    <li><strong>Fill in patient information</strong> including ID, name, date of birth, and gender</li>
+                                    <li><strong>Add observations</strong> with values, units, and reference ranges</li>
+                                    <li><strong>Click "Convert to HL7"</strong> to generate the HL7 v2 message</li>
+                                </ol>
+
+                                <h6 class="mt-4"><i class="fa fa-lightbulb-o me-1" aria-hidden="true"></i> Tips</h6>
+                                <ul>
+                                    <li>Use the <strong>test templates</strong> for realistic examples</li>
+                                    <li>Patient ID should be unique for each patient</li>
+                                    <li>Date format: YYYY-MM-DD (e.g., 1990-05-15)</li>
+                                    <li>You can <strong>copy or download</strong> the generated HL7 message</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fa fa-file-text-o me-1" aria-hidden="true"></i> About HL7 v2</h6>
+                                <p class="small">
+                                    HL7 (Health Level Seven) v2 is a standard for exchanging health information between healthcare applications.
+                                    The ORU^R01 message type is used for transmitting laboratory results.
+                                </p>
+
+                                <h6><i class="fa fa-shield me-1" aria-hidden="true"></i> Privacy Note</h6>
+                                <p class="small text-info">
+                                    <i class="fa fa-info-circle me-1" aria-hidden="true"></i>
+                                    This is a testing tool. Do not use real patient data. All templates contain fictional information for demonstration purposes only.
+                                </p>
+
+                                <h6><i class="fa fa-code me-1" aria-hidden="true"></i> Technical Details</h6>
+                                <ul class="small">
+                                    <li><strong>Message Type:</strong> ORU^R01 (Observation Result)</li>
+                                    <li><strong>Version:</strong> HL7 v2.5</li>
+                                    <li><strong>Encoding:</strong> Pipe-delimited (|)</li>
+                                    <li><strong>Field Separator:</strong> | (pipe)</li>
+                                    <li><strong>Component Separator:</strong> ^ (caret)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @onclick="CloseHelp">
+                            <i class="fa fa-check me-1" aria-hidden="true"></i>
+                            Got it!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (IsLoading)
+    {
+        <!-- Loading Overlay -->
+        <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+             style="background-color: rgba(255,255,255,0.8); z-index: 1050;">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="h5 text-primary">Converting to HL7...</div>
+                <div class="text-muted">Processing your JSON data</div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Input Section -->
+        <div class="col-lg-6 mb-4">
+            <JsonInputComponent @ref="InputComponent"
+                              OnConvert="HandleConvert"
+                              IsLoading="IsLoading" />
+        </div>
+
+        <!-- Results Section -->
+        <div class="col-lg-6 mb-4">
+            <HL7ResultsComponent Result="ConversionResult"
+                               OnClearResults="ClearResults"
+                               OnConvertAnother="PrepareForNewConversion" />
+        </div>
+    </div>
+
+    <!-- Status Messages -->
+    @if (!string.IsNullOrEmpty(StatusMessage))
+    {
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
+            <div class="alert @GetStatusAlertClass() alert-dismissible fade show" role="alert">
+                <i class="fa @GetStatusIcon() me-2" aria-hidden="true"></i>
+                @StatusMessage
+                <button type="button" class="btn-close" @onclick="ClearStatus" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private JsonInputComponent? InputComponent;
+    private JsonToHL7Result? ConversionResult;
+    private bool IsLoading = false;
+    private bool ShowHelpModal = false;
+    private string StatusMessage = string.Empty;
+    private string StatusType = "info"; // info, success, warning, error
+
+    private async Task HandleConvert(JsonToHL7Request request)
+    {
+        try
+        {
+            IsLoading = true;
+            StatusMessage = string.Empty;
+            StateHasChanged();
+
+            // Small delay to show loading state
+            await Task.Delay(100);
+
+            ConversionResult = await ConversionService.ConvertJsonToHL7Async(request);
+
+            if (ConversionResult.Success)
+            {
+                StatusMessage = "JSON data successfully converted to HL7 v2 format!";
+                StatusType = "success";
+
+                // Auto-scroll to results on small screens
+                await Task.Delay(500);
+                await JSRuntime.InvokeVoidAsync("scrollToResults");
+            }
+            else
+            {
+                StatusMessage = ConversionResult.ErrorMessage ?? "Conversion failed. Please check your input data.";
+                StatusType = "error";
+            }
+        }
+        catch (Exception ex)
+        {
+            ConversionResult = new JsonToHL7Result
+            {
+                Success = false,
+                ErrorMessage = $"An unexpected error occurred: {ex.Message}"
+            };
+            StatusMessage = "An error occurred during conversion. Please try again.";
+            StatusType = "error";
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+
+            // Auto-clear status message after 5 seconds
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                await InvokeAsync(() =>
+                {
+                    StatusMessage = string.Empty;
+                    StateHasChanged();
+                });
+            });
+        }
+    }
+
+    private void ClearResults()
+    {
+        ConversionResult = null;
+        StatusMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private void PrepareForNewConversion()
+    {
+        ConversionResult = null;
+        StatusMessage = string.Empty;
+        InputComponent?.LoadTemplate("basic-lab");
+        StateHasChanged();
+    }
+
+    private void ShowHelp()
+    {
+        ShowHelpModal = true;
+        StateHasChanged();
+    }
+
+    private void CloseHelp()
+    {
+        ShowHelpModal = false;
+        StateHasChanged();
+    }
+
+    private void ClearStatus()
+    {
+        StatusMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private string GetStatusAlertClass() => StatusType switch
+    {
+        "success" => "alert-success",
+        "warning" => "alert-warning",
+        "error" => "alert-danger",
+        _ => "alert-info"
+    };
+
+    private string GetStatusIcon() => StatusType switch
+    {
+        "success" => "fa-check-circle",
+        "warning" => "fa-exclamation-triangle",
+        "error" => "fa-times-circle",
+        _ => "fa-info-circle"
+    };
+}
