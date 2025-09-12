@@ -3,7 +3,8 @@
 <PageTitle>HL7 Results Gateway - Healthcare Integration Platform</PageTitle>
 
 <!-- Hero Section -->
-<div class="hero-section py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+<div class="hero-section py-5 mb-5"
+    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -12,7 +13,7 @@
                     HL7 Results Gateway
                 </h1>
                 <p class="lead mb-4">
-                    Streamline healthcare data integration with our comprehensive HL7 v2.5 message processing platform. 
+                    Streamline healthcare data integration with our comprehensive HL7 v2.5 message processing platform.
                     Transform, validate, and test HL7 messages with enterprise-grade reliability.
                 </p>
                 <div class="d-flex gap-3 flex-wrap">
@@ -30,7 +31,8 @@
                 <div class="position-relative">
                     <span class="fa-solid fa-hospital fa-10x opacity-25"></span>
                     <div class="position-absolute top-50 start-50 translate-middle">
-                        <span class="fa-solid fa-arrows-spin fa-3x text-warning" style="animation: spin 3s linear infinite;"></span>
+                        <span class="fa-solid fa-arrows-spin fa-3x text-warning"
+                            style="animation: spin 3s linear infinite;"></span>
                     </div>
                 </div>
             </div>
@@ -60,7 +62,7 @@
                     </div>
                     <h3 class="h4 mb-3">HL7 Message Testing</h3>
                     <p class="text-muted mb-4">
-                        Validate and test HL7 v2.5 messages with predefined templates. 
+                        Validate and test HL7 v2.5 messages with predefined templates.
                         Support for ORU^R01, ADT^A01, and ORM^O01 message types.
                     </p>
                     <a href="/hl7/testing" class="btn btn-outline-success">
@@ -80,7 +82,7 @@
                     </div>
                     <h3 class="h4 mb-3">JSON to HL7 Conversion</h3>
                     <p class="text-muted mb-4">
-                        Transform JSON data into standard HL7 v2.5 format with built-in validation 
+                        Transform JSON data into standard HL7 v2.5 format with built-in validation
                         and error handling for seamless integration.
                     </p>
                     <a href="/json-to-hl7" class="btn btn-outline-primary">
@@ -100,7 +102,7 @@
                     </div>
                     <h3 class="h4 mb-3">System Monitoring</h3>
                     <p class="text-muted mb-4">
-                        Monitor system health, API performance, and processing metrics 
+                        Monitor system health, API performance, and processing metrics
                         with real-time dashboards and alerts.
                     </p>
                     <a href="/dashboard" class="btn btn-outline-warning">
@@ -181,7 +183,7 @@
                 Ready to Get Started?
             </h2>
             <p class="lead text-muted mb-4">
-                Choose your workflow and begin processing HL7 messages in minutes. 
+                Choose your workflow and begin processing HL7 messages in minutes.
                 Our intuitive interface makes healthcare data integration simple and reliable.
             </p>
             <div class="d-flex gap-3 justify-content-center flex-wrap">
@@ -206,15 +208,22 @@
     .hover-lift {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
+
     .hover-lift:hover {
         transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
-    
+
     @@keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
     }
+
     .skip-link {
         position: absolute;
         top: -40px;
@@ -226,6 +235,7 @@
         border-radius: 0 0 4px 4px;
         z-index: 100;
     }
+
     .skip-link:focus {
         top: 0;
     }
