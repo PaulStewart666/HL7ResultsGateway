@@ -119,6 +119,8 @@ This plan addresses refactoring the Blazor WASM Client project to follow a prope
   - [x] All features remain accessible and functional
   - [x] Fixed HL7Testing DI error for IHL7MessageService by registering with named HttpClient
   - [x] Updated JsonToHL7 service registration to use interface pattern consistently
+  - [x] **CRITICAL FIX**: Resolved DirectScopedResolvedFromRootException in HttpClientServiceExtensions.cs by replacing IOptionsSnapshot<ApiConfiguration> with IConfiguration direct access
+  - [x] Verified Blazor WASM client now starts successfully on `https://localhost:7278` without DI scope errors
 
 - [x] TASK-023 | Validate configuration loading and binding
   - [x] appsettings.json and appsettings.Development.json load correctly

@@ -1,8 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using HL7ResultsGateway.Client.Core.Configuration;
 
 namespace HL7ResultsGateway.Client.Core.Extensions;
 
@@ -29,10 +27,14 @@ public static class HttpClientServiceExtensions
         // Configure named HttpClient for Azure Functions API
         services.AddHttpClient("AzureFunctionsApi", (sp, client) =>
         {
-            var apiConfig = sp.GetRequiredService<IOptionsSnapshot<ApiConfiguration>>().Value;
+            // Use IConfiguration directly to avoid scoped service resolution in root scope
+            var config = sp.GetRequiredService<IConfiguration>();
 
-            client.BaseAddress = new Uri(apiConfig.BaseUrl);
-            client.Timeout = apiConfig.Timeout;
+            var baseUrl = config["Api:BaseUrl"] ?? "http://localhost:7071";
+            var timeoutSeconds = config.GetValue<int>("Api:TimeoutSeconds", 30);
+
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
 
             // Add default headers
             client.DefaultRequestHeaders.Add("User-Agent", "HL7ResultsGateway-Client/1.0");
