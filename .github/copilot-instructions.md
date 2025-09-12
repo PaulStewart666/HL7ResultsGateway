@@ -8,7 +8,7 @@ This is a **Clean Architecture** HL7 message processing system with **Azure Func
 - **Application** (`src/HL7ResultsGateway.Application/`): Use cases and handlers (follows CQRS pattern)
 - **API** (`src/HL7ResultsGateway.API/`): Azure Functions HTTP triggers (.NET 9.0 Isolated Worker)
 - **Infrastructure** (`src/HL7ResultsGateway.Infrastructure/`): External services, logging abstraction (ILoggingService), and converters
-- **Client** (`src/Client/HL7ResultsGateway.Client/`): Blazor WASM frontend (.NET 10.0 Preview) with feature-based organization
+- **Client** (`src/Client/HL7ResultsGateway.Client/`): Blazor WASM frontend (.NET 9.0) with feature-based organization
 
 ## Key Patterns & Conventions
 
@@ -60,7 +60,7 @@ result.ParsedMessage!.MessageType.Should().Be(HL7MessageType.ORU_R01);
 - **Error Handling**: Return appropriate HTTP status codes (400/500) with error objects
 
 ### Blazor WASM Client Specifics
-- **Target Framework**: .NET 10.0 Preview for latest features
+- **Target Framework**: .NET 9.0 for Azure Static Web Apps compatibility
 - **Feature Organization**: `/Features/{FeatureName}/{Models|Services|Components|Pages|Extensions}/` structure
 - **Feature Documentation**: Each feature folder MUST contain `{Feature}.razor.md` documentation file
 - **Feature DI Pattern**: Each feature MUST have `Extensions/{FeatureName}ServiceExtensions.cs` for DI registration
@@ -282,7 +282,7 @@ dotnet run
 ## Project Dependencies
 - **Target Framework**:
   - .NET 9.0 (API, Domain, Application, Infrastructure, all tests)
-  - .NET 10.0 Preview (Blazor WASM Client only)
+  - .NET 9.0 (Blazor WASM Client)
 - **Azure Functions**: Isolated Worker model with Core Tools v4.2.2+
 - **Blazor WASM**: PWA-enabled with Azure AD B2C authentication
 - **Testing**: xUnit + FluentAssertions + Moq + Coverlet
@@ -299,7 +299,7 @@ dotnet run
 
 ## Common Gotchas
 - **Azure Functions**: Use .NET 9.0, not .NET 10+ (compatibility limitation)
-- **Blazor Client**: Uses .NET 10.0 Preview for latest features
+- **Blazor Client**: Uses .NET 9.0 for Azure deployment compatibility
 - **EditorConfig**: Auto-format on save to match 4-space indentation rules
 - **FluentAssertions**: Always prefer `.Should()` syntax over Assert methods
 - **Null Safety**: Enable nullable reference types, use `!` operator when needed for tests

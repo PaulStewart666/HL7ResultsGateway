@@ -29,7 +29,7 @@ This plan addresses refactoring the Blazor WASM Client project to follow a prope
 
 **CON-001**: Must maintain backward compatibility with existing features
 **CON-002**: Must not break existing functionality during refactoring
-**CON-003**: Target framework remains .NET 10.0 Preview for Blazor WASM
+**CON-003**: Target framework is .NET 9.0 for Azure Static Web Apps compatibility
 
 **GUD-001**: Follow established naming conventions for service extensions
 **GUD-002**: Maintain consistent code structure across all features
