@@ -24,7 +24,8 @@ public static class HL7TestingServiceExtensions
             return new HL7MessageService(httpClient);
         });
 
-        services.AddScoped<TestMessageRepository>();
+        // Register TestMessageRepository with interface
+        services.AddScoped<ITestMessageRepository, TestMessageRepository>();
 
         return services;
     }
