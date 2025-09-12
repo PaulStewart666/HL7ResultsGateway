@@ -1,5 +1,4 @@
 using HL7ResultsGateway.Client.Features.HL7Testing.Services;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HL7ResultsGateway.Client.Features.HL7Testing.Extensions;
@@ -17,7 +16,13 @@ public static class HL7TestingServiceExtensions
     public static IServiceCollection AddHL7TestingServices(this IServiceCollection services)
     {
         // Register HL7Testing services
-        services.AddScoped<HL7MessageService>();
+        services.AddScoped<IHL7MessageService>(sp =>
+        {
+            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            var httpClient = httpClientFactory.CreateClient("AzureFunctionsApi");
+            return new HL7MessageService(httpClient);
+        });
+        
         services.AddScoped<TestMessageRepository>();
 
         return services;

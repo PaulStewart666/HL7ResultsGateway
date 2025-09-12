@@ -17,8 +17,13 @@ public static class JsonToHL7ServiceExtensions
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddJsonToHL7Services(this IServiceCollection services)
     {
-        // Register JsonToHL7 service
-        services.AddScoped<JsonToHL7Service>();
+        // Register JsonToHL7 service with named HttpClient
+        services.AddScoped<IJsonToHL7Service>(provider =>
+        {
+            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+            var httpClient = httpClientFactory.CreateClient("AzureFunctionsApi");
+            return new JsonToHL7Service(httpClient);
+        });
 
         return services;
     }
