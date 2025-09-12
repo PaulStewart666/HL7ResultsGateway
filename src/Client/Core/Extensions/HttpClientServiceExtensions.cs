@@ -29,11 +29,32 @@ public static class HttpClientServiceExtensions
         {
             // Use IConfiguration directly to avoid scoped service resolution in root scope
             var config = sp.GetRequiredService<IConfiguration>();
+            var hostEnvironment = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
 
-            var baseUrl = config["Api:BaseUrl"] ?? "http://localhost:7071";
+            var configuredBaseUrl = config["Api:BaseUrl"];
             var timeoutSeconds = config.GetValue<int>("Api:TimeoutSeconds", 30);
 
-            client.BaseAddress = new Uri(baseUrl);
+            Uri baseAddress;
+
+            // Handle different BaseUrl configurations
+            if (string.IsNullOrWhiteSpace(configuredBaseUrl))
+            {
+                // Empty or null: Use current host (works for custom domains and Azure Static Web Apps)
+                baseAddress = new Uri(hostEnvironment.BaseAddress);
+            }
+            else if (configuredBaseUrl.StartsWith("http"))
+            {
+                // Absolute URL: Use as-is (for local development or different API hosts)
+                baseAddress = new Uri(configuredBaseUrl);
+            }
+            else
+            {
+                // Relative URL: Combine with current host
+                var hostUri = new Uri(hostEnvironment.BaseAddress);
+                baseAddress = new Uri(hostUri, configuredBaseUrl.TrimStart('/'));
+            }
+
+            client.BaseAddress = baseAddress;
             client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
 
             // Add default headers
