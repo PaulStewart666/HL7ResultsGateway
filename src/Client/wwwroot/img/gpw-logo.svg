@@ -1,0 +1,11 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none"
+    xmlns="http://www.w3.org/2000/svg" aria-label="Genomics Partnership Wales Logo">
+    <g>
+        <rect x="0" y="0" width="80" height="80" fill="#fff"/>
+        <g>
+            <path d="M20 10 L60 10 L70 40 L60 70 L20 70 L10 40 Z" fill="#0f2f39"/>
+            <rect x="25" y="25" width="30" height="30" fill="#6ab9b2"/>
+            <rect x="35" y="35" width="10" height="10" fill="#2d8f83"/>
+        </g>
+    </g>
+</svg>

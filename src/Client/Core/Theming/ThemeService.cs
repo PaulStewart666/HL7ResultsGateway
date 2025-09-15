@@ -5,9 +5,10 @@ namespace HL7ResultsGateway.Client.Core.Theming;
 public class ThemeService : IThemeService
 {
     private readonly IJSRuntime _jsRuntime;
-    private string _currentTheme = "light";
+    // Set default to GPW branded theme
+    private string _currentTheme = "gpw";
     public string CurrentTheme => _currentTheme;
-    public IReadOnlyList<string> AvailableThemes { get; } = new[] { "light", "dark", "medical" };
+    public IReadOnlyList<string> AvailableThemes { get; } = new[] { "gpw", "light", "dark", "medical" };
     public event Action<string>? ThemeChanged;
     public ThemeService(IJSRuntime jsRuntime)
     {
@@ -26,9 +27,9 @@ public class ThemeService : IThemeService
         }
         catch (Exception ex)
         {
-            // Fallback to light theme if JS interop fails
+            // Fallback to gpw theme if JS interop fails
             Console.WriteLine($"Theme initialization failed: {ex.Message}");
-            _currentTheme = "light";
+            _currentTheme = "gpw";
         }
     }
     public async Task SetThemeAsync(string themeName)
