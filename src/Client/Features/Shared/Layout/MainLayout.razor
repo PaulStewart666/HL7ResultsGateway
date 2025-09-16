@@ -11,14 +11,14 @@
             <a class="navbar-brand d-flex align-items-center gap-2" href="/">
                 @if (ThemeService.CurrentTheme == "gpw")
                 {
-                    <img src="img/gpw-logo.svg" alt="Genomics Partnership Wales Logo" style="height:2.5rem; width:auto;"
-                        class="align-middle" />
+                    <img src="img/gpw-logo.webp" alt="Genomics Partnership Wales Logo"
+                        style="height:2rem; width:auto; max-width:200px;" class="align-middle" />
                 }
                 else
                 {
                     <span class="fa fa-notes-medical" role="img" aria-label="HL7 Medical Clipboard"></span>
+                    <span class="fw-bold">HL7 Results Gateway</span>
                 }
-                <span class="fw-bold">HL7 Results Gateway</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

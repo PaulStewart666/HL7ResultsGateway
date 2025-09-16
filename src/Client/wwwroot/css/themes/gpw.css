@@ -1,12 +1,13 @@
 /* GPW Theme - Genomics Partnership Wales branding */
+
 body.theme-gpw {
-  /* Core palette derived from GPW logo: deep teal, light teal, dark text, white backgrounds */
   --background-color: #ffffff !important;
-  --text-color: #0f2f39 !important; /* deep desaturated teal for body text */
-  --color-primary: #0f2f39 !important; /* primary brand deep teal */
-  --color-secondary: #6ab9b2 !important; /* light aqua/teal from logo bars */
-  --color-success: #2d8f83 !important; /* accessible mid teal */
-  --color-danger: #c4334d !important; /* harmonized danger */
+  --text-color: #0f2f39 !important;
+  --color-primary: #0f2f39 !important; /* Deep teal */
+  --color-secondary: #6ab9b2 !important; /* Light teal */
+  --color-accent: #2d8f83 !important; /* Mid teal */
+  --color-success: #2d8f83 !important;
+  --color-danger: #c4334d !important;
   --color-warning: #d69d2d !important;
   --color-info: #6ab9b2 !important;
   --font-family-base: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
@@ -25,40 +26,49 @@ body.theme-gpw .card {
 }
 
 /* Navigation */
+
 body.theme-gpw .navbar {
-  background: linear-gradient(90deg,#0f2f39 0%, #14505e 100%) !important;
-  border-bottom: 2px solid #6ab9b2 !important;
+  background: linear-gradient(90deg, #0f2f39 0%, #2d8f83 100%) !important;
+  border-bottom: 3px solid #6ab9b2 !important;
 }
 body.theme-gpw .navbar .navbar-brand,
 body.theme-gpw .navbar .nav-link {
   color: #ffffff !important;
 }
+body.theme-gpw .navbar .navbar-brand img {
+  filter: drop-shadow(0 2px 4px rgba(15,47,57,0.12));
+}
 body.theme-gpw .navbar .nav-link.active,
 body.theme-gpw .navbar .nav-link:focus,
 body.theme-gpw .navbar .nav-link:hover {
   color: #6ab9b2 !important;
+  background-color: rgba(42,185,178,0.08) !important;
 }
 
 /* Buttons */
+
 body.theme-gpw .btn-primary {
   background-color: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
 }
 body.theme-gpw .btn-primary:hover,
 body.theme-gpw .btn-primary:focus {
-  background-color: #14505e !important;
-  border-color: #14505e !important;
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-secondary) !important;
+  color: #fff !important;
 }
 body.theme-gpw .btn-outline-primary {
   color: var(--color-primary) !important;
   border-color: var(--color-primary) !important;
 }
 body.theme-gpw .btn-outline-primary:hover {
-  background-color: var(--color-primary) !important;
-  color: #ffffff !important;
+  background-color: var(--color-secondary) !important;
+  color: #fff !important;
 }
 
 /* Headings */
+
 body.theme-gpw h1,
 body.theme-gpw h2,
 body.theme-gpw h3,
@@ -66,6 +76,7 @@ body.theme-gpw h4,
 body.theme-gpw h5,
 body.theme-gpw h6 {
   color: var(--color-primary) !important;
+  letter-spacing: 0.5px;
 }
 
 /* Text content */
@@ -76,8 +87,15 @@ body.theme-gpw span:not(.fa):not([class*="icon"]) {
 }
 
 /* Utility: links */
-body.theme-gpw a { color: var(--color-secondary) !important; }
-body.theme-gpw a:hover, body.theme-gpw a:focus { color: #4da199 !important; }
+
+body.theme-gpw a {
+  color: var(--color-secondary) !important;
+  text-decoration: underline;
+}
+body.theme-gpw a:hover, body.theme-gpw a:focus {
+  color: var(--color-accent) !important;
+  text-decoration: underline;
+}
 
 /* Focus outline ensure WCAG contrast */
 body.theme-gpw :focus { outline: 2px solid #6ab9b2 !important; outline-offset: 2px; }
