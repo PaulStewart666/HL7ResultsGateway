@@ -62,10 +62,7 @@ public sealed class SendORUMessage
                     "Request body must be valid JSON containing ORU message transmission details",
                     correlationId);
 
-                return new ObjectResult(errorResponse)
-                {
-                    StatusCode = errorResponse.StatusCode
-                };
+                return new BadRequestObjectResult(errorResponse);
             }
 
             // Validate request DTO
@@ -100,9 +97,8 @@ public sealed class SendORUMessage
                 "SendORUMessage command completed. Success: {Success}, TransmissionId: {TransmissionId}. CorrelationId: {CorrelationId}",
                 result.Success, result.TransmissionId, correlationId);
 
-            // Create and return response
+            // Create and return response based on handler result
             var response = _responseFactory.CreateSuccessResponse(result, correlationId);
-
             return new OkObjectResult(response);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -117,10 +113,8 @@ public sealed class SendORUMessage
                 "The transmission operation was cancelled before completion",
                 correlationId);
 
-            return new ObjectResult(cancelResponse)
-            {
-                StatusCode = cancelResponse.StatusCode
-            };
+            // Use ObjectResult for custom 409 status code (no semantic equivalent)
+            return new ObjectResult(cancelResponse) { StatusCode = 409 };
         }
         catch (Exception ex)
         {
@@ -129,11 +123,7 @@ public sealed class SendORUMessage
                 correlationId);
 
             var errorResponse = _responseFactory.CreateExceptionResponse(ex, correlationId);
-
-            return new ObjectResult(errorResponse)
-            {
-                StatusCode = errorResponse.StatusCode
-            };
+            return new ObjectResult(errorResponse) { StatusCode = 500 };
         }
     }
 
