@@ -1,32 +1,183 @@
 @page "/dashboard"
 @using HL7ResultsGateway.Client.Features.Dashboard.Components
 
-<PageTitle>Dashboard</PageTitle>
+<PageTitle>HL7 Results Gateway - Dashboard</PageTitle>
 
 <div class="container py-4">
-    <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4">
-            <DashboardCard Title="Lab Results" Subtitle="Latest HL7 Messages">
-                <div class="d-flex align-items-center mb-2">
-                    <span class="fa-solid fa-flask-vial fa-2x text-primary me-2" role="img" aria-label="Lab Icon"></span>
-                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">23 new results</span>
-                </div>
-                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Last updated: 10 Sep 2025</div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 text-primary mb-3">
+                <span class="fa-solid fa-tachometer-alt me-2"></span>
+                HL7 Results Gateway Dashboard
+            </h1>
+            <p class="lead text-muted">Monitor and manage HL7 message processing and conversion workflows</p>
+        </div>
+    </div>
 
-                <div class="d-flex align-items-center mb-2">
-                    <span class="fa-solid fa-user-group fa-2x text-success me-2" role="img" aria-label="Patients Icon"></span>
-                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">8 active</span>
+    <div class="row g-4">
+        <!-- HL7 Testing Feature -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="HL7 Testing" Subtitle="Message Processing & Validation">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="fa-solid fa-vial-circle-check fa-2x text-success me-3" role="img"
+                        aria-label="HL7 Testing Icon"></span>
+                    <div>
+                        <div style="font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 500;">Ready for
+                            Testing</div>
+                        <div class="text-muted small">Process HL7 v2 messages</div>
+                    </div>
                 </div>
-                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Last admission: 09 Sep 2025</div>
+
+                <div class="mb-2">
+                    <small class="text-muted">Available Test Messages:</small>
+                    <div class="d-flex justify-content-between">
+                        <span class="badge bg-primary">ORU^R01</span>
+                        <span class="badge bg-info">ADT^A01</span>
+                        <span class="badge bg-warning">ORM^O01</span>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <a href="/hl7/testing" class="btn btn-outline-primary btn-sm">
+                        <span class="fa-solid fa-play me-1"></span>
+                        Start Testing
+                    </a>
+                </div>
             </DashboardCard>
         </div>
+
+        <!-- JSON to HL7 Conversion Feature -->
         <div class="col-12 col-md-6 col-lg-4">
-            <DashboardCard Title="System Health" Subtitle="Status Overview">
-                <div class="d-flex align-items-center mb-2">
-                    <span class="fa-solid fa-heart-pulse fa-2x text-danger me-2" role="img" aria-label="Health Icon"></span>
-                    <span style="font-family: 'Roboto', sans-serif; font-size: 1.25rem;">All systems operational</span>
+            <DashboardCard Title="JSON to HL7 Conversion" Subtitle="Transform JSON to HL7 v2 Format">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="fa-solid fa-code-compare fa-2x text-primary me-3" role="img"
+                        aria-label="Conversion Icon"></span>
+                    <div>
+                        <div style="font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 500;">Online
+                            Converter</div>
+                        <div class="text-muted small">JSON ⟶ HL7 v2.5</div>
+                    </div>
                 </div>
-                <div class="text-muted" style="font-family: 'Inter', sans-serif;">Checked: 10 Sep 2025, 09:00</div>
+
+                <div class="mb-2">
+                    <small class="text-muted">Supported Formats:</small>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-secondary">Lab Results</span>
+                        <span class="badge bg-secondary">Patient Data</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="small text-success">
+                        <span class="fa-solid fa-check-circle me-1"></span>
+                        Validation Included
+                    </div>
+                    <a href="/json-to-hl7" class="btn btn-outline-primary btn-sm">
+                        <span class="fa-solid fa-exchange-alt me-1"></span>
+                        Convert Now
+                    </a>
+                </div>
+            </DashboardCard>
+        </div>
+
+        <!-- System Health -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="System Health" Subtitle="API & Service Status">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="fa-solid fa-heart-pulse fa-2x text-success me-3" role="img"
+                        aria-label="Health Icon"></span>
+                    <div>
+                        <div style="font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 500;">All Systems
+                            Operational</div>
+                        <div class="text-muted small">Azure Functions API</div>
+                    </div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="small text-muted">API Status</div>
+                        <div class="text-success">
+                            <span class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></span>
+                            Online
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Response Time</div>
+                        <div class="text-success">&lt; 100ms</div>
+                    </div>
+                </div>
+
+                <div class="text-muted small">
+                    <span class="fa-solid fa-clock me-1"></span>
+                    Last checked: @DateTime.Now.ToString("MMM dd, HH:mm")
+                </div>
+            </DashboardCard>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="Quick Actions" Subtitle="Common Tasks">
+                <div class="d-grid gap-2">
+                    <a href="/hl7/testing" class="btn btn-outline-primary">
+                        <span class="fa-solid fa-flask me-2"></span>
+                        Test HL7 Message
+                    </a>
+                    <a href="/json-to-hl7" class="btn btn-outline-success">
+                        <span class="fa-solid fa-file-code me-2"></span>
+                        Convert JSON to HL7
+                    </a>
+                    <button class="btn btn-outline-secondary" disabled>
+                        <span class="fa-solid fa-chart-line me-2"></span>
+                        View Reports
+                        <small class="d-block text-muted">Coming Soon</small>
+                    </button>
+                </div>
+            </DashboardCard>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <DashboardCard Title="API Endpoints" Subtitle="Available Services">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-medium">Health Check</div>
+                                <small class="text-muted">GET /api/health</small>
+                            </div>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-medium">Process HL7</div>
+                                <small class="text-muted">POST /api/hl7/process</small>
+                            </div>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-medium">JSON to HL7</div>
+                                <small class="text-muted">POST /api/convert-json-to-hl7</small>
+                            </div>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </DashboardCard>
+        </div>
+
+        <!-- Recent Activity (Placeholder) -->
+        <div class="col-12">
+            <DashboardCard Title="Recent Activity" Subtitle="Latest HL7 Operations">
+                <div class="text-center py-4 text-muted">
+                    <span class="fa-solid fa-clock fa-3x mb-3 d-block opacity-50"></span>
+                    <p class="mb-0">Activity logging coming soon...</p>
+                    <small>This will show recent HL7 message processing and conversion activities</small>
+                </div>
             </DashboardCard>
         </div>
     </div>

@@ -1,0 +1,28 @@
+name: Azure Static Web Apps CI/CD
+
+pr:
+  branches:
+    include:
+      - develop
+trigger:
+  branches:
+    include:
+      - develop
+
+jobs:
+  - job: build_and_deploy_job
+    displayName: Build and Deploy Job
+    condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+      - group: Azure-Static-Web-Apps-brave-flower-0c709e503-variable-group
+    steps:
+      - checkout: self
+        submodules: true
+      - task: AzureStaticWebApp@0
+        inputs:
+          azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_FLOWER_0C709E503)
+          app_location: "src/Client"
+          api_location: "src/HL7ResultsGateway.API"
+          output_location: "wwwroot"

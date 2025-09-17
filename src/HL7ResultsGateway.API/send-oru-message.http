@@ -1,0 +1,244 @@
+### Send ORU Message - HTTP Example
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "destinationEndpoint": "https://example.com/hl7",
+  "messageData": {
+    "messageControlId": "MSG001",
+    "messageType": "ORU_R01",
+    "sendingApplication": "LAB",
+    "sendingFacility": "HOSPITAL",
+    "receivingApplication": "EMR",
+    "receivingFacility": "HOSPITAL",
+    "timestamp": "2023-12-01T12:00:00Z",
+    "patient": {
+      "id": "12345",
+      "familyName": "DOE",
+      "givenName": "JOHN",
+      "middleName": "MIDDLE",
+      "dateOfBirth": "1985-01-01",
+      "gender": "M",
+      "address": "123 MAIN ST, ANYTOWN, ST 12345",
+      "phoneNumber": "(555)123-4567"
+    },
+    "observations": [
+      {
+        "id": "OBX1",
+        "valueType": "NM",
+        "identifier": "WBC",
+        "text": "WHITE BLOOD CELL COUNT",
+        "value": "7500",
+        "units": "/uL",
+        "referenceRange": "4000-10000",
+        "abnormalFlags": "N",
+        "observationDateTime": "2023-12-01T11:00:00Z"
+      }
+    ]
+  },
+  "protocol": "HTTP",
+  "timeoutSeconds": 30,
+  "headers": {
+    "Content-Type": "application/x-hl7",
+    "Authorization": "Bearer your-token-here"
+  }
+}
+
+### Send ORU Message - HTTPS Example with Custom Headers
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "destinationEndpoint": "https://wrrsendoscopyserviceuat.wales.nhs.uk/SubmitHL7Message",
+  "messageData": {
+    "messageControlId": "MSG002",
+    "messageType": "ORU_R01",
+    "sendingApplication": "LAB",
+    "sendingFacility": "HOSPITAL",
+    "receivingApplication": "EMR",
+    "receivingFacility": "HOSPITAL",
+    "timestamp": "2023-12-01T12:00:00Z",
+    "patient": {
+      "id": "67890",
+      "familyName": "SMITH",
+      "givenName": "JANE",
+      "dateOfBirth": "1990-06-15",
+      "gender": "F",
+      "address": "456 OAK AVE, SOMEWHERE, CA 54321",
+      "phoneNumber": "(555)987-6543"
+    },
+    "observations": [
+      {
+        "id": "OBX1",
+        "valueType": "NM",
+        "identifier": "GLUCOSE",
+        "text": "GLUCOSE LEVEL",
+        "value": "95",
+        "units": "mg/dL",
+        "referenceRange": "70-100",
+        "abnormalFlags": "N",
+        "observationDateTime": "2023-12-01T10:50:00Z"
+      }
+    ]
+  },
+  "protocol": "HTTPS",
+  "timeoutSeconds": 60,
+  "port": 1065,
+  "headers": {
+    "Content-Type": "application/x-hl7",
+    "X-API-Key": "your-api-key-here",
+    "X-Client-ID": "HL7ResultsGateway"
+  }
+}
+
+### Send ORU Message - MLLP Example
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "destinationEndpoint": "mllp://hl7-server.example.com:2575",
+  "messageData": {
+    "messageControlId": "MSG003",
+    "messageType": "ORU_R01",
+    "sendingApplication": "LAB",
+    "sendingFacility": "HOSPITAL",
+    "receivingApplication": "HIS",
+    "receivingFacility": "HOSPITAL",
+    "timestamp": "2023-12-01T12:00:00Z",
+    "patient": {
+      "id": "11111",
+      "familyName": "TEST",
+      "givenName": "PATIENT",
+      "dateOfBirth": "1975-03-01",
+      "gender": "M",
+      "address": "789 PINE ST, TESTTOWN, NY 67890",
+      "phoneNumber": "(555)111-2222"
+    },
+    "observations": [
+      {
+        "id": "OBX1",
+        "valueType": "NM",
+        "identifier": "CHOL",
+        "text": "CHOLESTEROL",
+        "value": "180",
+        "units": "mg/dL",
+        "referenceRange": "<200",
+        "abnormalFlags": "N",
+        "observationDateTime": "2023-12-01T09:00:00Z"
+      },
+      {
+        "id": "OBX2",
+        "valueType": "NM",
+        "identifier": "HDL",
+        "text": "HDL CHOLESTEROL",
+        "value": "45",
+        "units": "mg/dL",
+        "referenceRange": ">40",
+        "abnormalFlags": "N",
+        "observationDateTime": "2023-12-01T09:00:00Z"
+      },
+      {
+        "id": "OBX3",
+        "valueType": "NM",
+        "identifier": "LDL",
+        "text": "LDL CHOLESTEROL",
+        "value": "110",
+        "units": "mg/dL",
+        "referenceRange": "<100",
+        "abnormalFlags": "H",
+        "observationDateTime": "2023-12-01T09:00:00Z"
+      }
+    ]
+  },
+  "protocol": "MLLP",
+  "timeoutSeconds": 45
+}
+
+### Send ORU Message - SFTP Example
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "destinationEndpoint": "sftp://username@sftp.example.com:22/incoming/hl7",
+  "messageData": {
+    "messageControlId": "MSG004",
+    "messageType": "ORU_R01",
+    "sendingApplication": "LAB",
+    "sendingFacility": "HOSPITAL",
+    "receivingApplication": "LIS",
+    "receivingFacility": "HOSPITAL",
+    "timestamp": "2023-12-01T12:00:00Z",
+    "patient": {
+      "id": "22222",
+      "familyName": "SAMPLE",
+      "givenName": "ANOTHER",
+      "dateOfBirth": "1982-12-15",
+      "gender": "F",
+      "address": "321 ELM ST, SAMPLETOWN, FL 13579",
+      "phoneNumber": "(555)444-5555"
+    },
+    "observations": [
+      {
+        "id": "OBX1",
+        "valueType": "NM",
+        "identifier": "HGB",
+        "text": "HEMOGLOBIN",
+        "value": "12.5",
+        "units": "g/dL",
+        "referenceRange": "12.0-15.5",
+        "abnormalFlags": "N",
+        "observationDateTime": "2023-12-01T08:00:00Z"
+      }
+    ]
+  },
+  "protocol": "SFTP",
+  "timeoutSeconds": 120,
+  "headers": {
+    "Username": "hl7user",
+    "Password": "secure-password"
+  }
+}
+
+### Send ORU Message - Validation Error Example (Missing Required Fields)
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "destinationEndpoint": "",
+  "messageData": {
+    "messageControlId": "",
+    "messageType": "",
+    "sendingApplication": "",
+    "sendingFacility": "",
+    "receivingApplication": "",
+    "receivingFacility": "",
+    "timestamp": "",
+    "patient": {
+      "id": "",
+      "familyName": "",
+      "givenName": ""
+    },
+    "observations": []
+  },
+  "protocol": "INVALID"
+}
+
+### Send ORU Message - Invalid JSON Example
+POST http://localhost:7071/api/hl7/send-oru
+Content-Type: application/json
+X-Correlation-ID: {{$guid}}
+
+{
+  "endpoint": "https://example.com/hl7",
+  "hl7Message": "MSH|...", // Invalid JSON - trailing comma and comment
+  "protocol": "HTTP",
+}
+
+### Health Check (for comparison)
+GET http://localhost:7071/api/health
+X-Correlation-ID: {{$guid}}

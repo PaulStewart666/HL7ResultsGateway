@@ -24,7 +24,7 @@ Refactor the current JavaScript interop implementation in the HL7ResultsGateway 
 - **REQ-006**: Support component-specific JavaScript functionality with lazy loading
 - **SEC-001**: Maintain secure JavaScript execution without global namespace pollution
 - **CON-001**: Must maintain compatibility with existing HL7Testing feature functionality
-- **CON-002**: Must work with .NET 10.0 Preview Blazor WASM client
+- **CON-002**: Must work with .NET 9.0 Blazor WASM client
 - **GUD-001**: Follow module-based JavaScript architecture patterns
 - **PAT-001**: Implement IAsyncDisposable pattern for proper resource cleanup
 - **PAT-002**: Use DotNetObjectReference for secure .NET-JS communication
@@ -94,7 +94,7 @@ Refactor the current JavaScript interop implementation in the HL7ResultsGateway 
 
 ## 4. Dependencies
 
-- **DEP-001**: .NET 10.0 Preview Blazor WASM framework support for scoped JavaScript
+- **DEP-001**: .NET 9.0 Blazor WASM framework support for scoped JavaScript
 - **DEP-002**: IJSRuntime service for JavaScript interop
 - **DEP-003**: Microsoft.JSInterop namespace for module loading
 - **DEP-004**: Browser support for ES6 modules and dynamic imports
@@ -125,7 +125,7 @@ Refactor the current JavaScript interop implementation in the HL7ResultsGateway 
 - **RISK-001**: Browser compatibility issues with ES6 modules in older browsers
 - **RISK-002**: Potential performance impact during component initialization
 - **RISK-003**: Complexity in debugging component-specific JavaScript modules
-- **ASSUMPTION-001**: .NET 10.0 Preview properly supports scoped JavaScript features
+- **ASSUMPTION-001**: .NET 9.0 properly supports scoped JavaScript features
 - **ASSUMPTION-002**: All target browsers support dynamic ES6 module imports
 - **ASSUMPTION-003**: Current functionality can be cleanly separated by component boundaries
 
