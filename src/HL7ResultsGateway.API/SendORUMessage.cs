@@ -1,9 +1,11 @@
 using System.Net;
+
 using HL7ResultsGateway.API.Factories;
 using HL7ResultsGateway.API.Models;
 using HL7ResultsGateway.Application.DTOs;
 using HL7ResultsGateway.Application.UseCases.SendORUMessage;
 using HL7ResultsGateway.Application.Validators;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -39,7 +41,7 @@ public sealed class SendORUMessage
         CancellationToken cancellationToken = default)
     {
         var correlationId = GenerateCorrelationId(req);
-        
+
         try
         {
             _logger.LogInformation(
@@ -87,20 +89,20 @@ public sealed class SendORUMessage
 
             // Create and execute command
             var command = CreateCommandFromRequest(requestDto);
-            
+
             _logger.LogInformation(
                 "Executing SendORUMessage command for endpoint {Endpoint} with protocol {Protocol}. CorrelationId: {CorrelationId}",
                 command.DestinationEndpoint, command.Protocol, correlationId);
 
             var result = await _handler.Handle(command, cancellationToken);
-            
+
             _logger.LogInformation(
                 "SendORUMessage command completed. Success: {Success}, TransmissionId: {TransmissionId}. CorrelationId: {CorrelationId}",
                 result.Success, result.TransmissionId, correlationId);
 
             // Create and return response
             var response = _responseFactory.CreateSuccessResponse(result, correlationId);
-            
+
             return new OkObjectResult(response);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -127,7 +129,7 @@ public sealed class SendORUMessage
                 correlationId);
 
             var errorResponse = _responseFactory.CreateExceptionResponse(ex, correlationId);
-            
+
             return new ObjectResult(errorResponse)
             {
                 StatusCode = errorResponse.StatusCode
@@ -162,7 +164,7 @@ public sealed class SendORUMessage
         {
             using var reader = new StreamReader(req.Body);
             var json = await reader.ReadToEndAsync(cancellationToken);
-            
+
             if (string.IsNullOrWhiteSpace(json))
                 return null;
 

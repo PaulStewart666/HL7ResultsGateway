@@ -11,6 +11,7 @@ using HL7ResultsGateway.Infrastructure.Logging;
 using HL7ResultsGateway.Infrastructure.Repositories;
 using HL7ResultsGateway.Infrastructure.Services.Conversion;
 using HL7ResultsGateway.Infrastructure.Services.Transmission;
+
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
@@ -52,14 +53,14 @@ builder.Services.AddScoped<IHL7TransmissionProviderFactory, HL7TransmissionProvi
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 {
     var configuration = serviceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
-    var connectionString = configuration.GetConnectionString("CosmosDb") ?? 
+    var connectionString = configuration.GetConnectionString("CosmosDb") ??
                           configuration.GetValue<string>("HL7Transmission:CosmosDb:ConnectionString");
-    
+
     if (!string.IsNullOrWhiteSpace(connectionString))
     {
         return new CosmosClient(connectionString);
     }
-    
+
     // Return a mock client or throw exception based on requirements
     throw new InvalidOperationException("CosmosDB connection string is not configured");
 });

@@ -2,6 +2,7 @@ using HL7ResultsGateway.API.Models;
 using HL7ResultsGateway.Application.DTOs;
 using HL7ResultsGateway.Application.UseCases.SendORUMessage;
 using HL7ResultsGateway.Domain.Exceptions;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -110,7 +111,7 @@ public sealed class ResponseDTOFactory : IResponseDTOFactory
                 StatusCodes.Status400BadRequest,
                 nullEx.ToString(),
                 correlationId),
-                
+
             ArgumentException argEx => CreateErrorResponse(
                 $"Invalid argument: {argEx.Message}",
                 StatusCodes.Status400BadRequest,

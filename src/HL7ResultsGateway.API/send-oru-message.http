@@ -10,7 +10,7 @@ X-Correlation-ID: {{$guid}}
     "messageType": "ORU_R01",
     "sendingApplication": "LAB",
     "sendingFacility": "HOSPITAL",
-    "receivingApplication": "EMR", 
+    "receivingApplication": "EMR",
     "receivingFacility": "HOSPITAL",
     "timestamp": "2023-12-01T12:00:00Z",
     "patient": {
