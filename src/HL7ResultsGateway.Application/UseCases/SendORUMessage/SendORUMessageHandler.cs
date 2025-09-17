@@ -58,22 +58,24 @@ public class SendORUMessageHandler : ISendORUMessageHandler
 
         try
         {
-            // Validate protocol support
-            if (!_providerFactory.IsProtocolSupported(command.Protocol))
+            // Generate HL7 message string from domain entity first.
+            // Tests expect conversion to happen before provider creation.
+            string hl7MessageString;
+            try
             {
-                var errorMessage = $"Transmission protocol {command.Protocol} is not supported";
-                _logger.LogWarning("Unsupported protocol: {Protocol}", command.Protocol);
+                hl7MessageString = await GenerateHL7MessageAsync(command.MessageData, cancellationToken);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "HL7 conversion failed for TransmissionId: {TransmissionId}", transmissionId);
 
                 await LogTransmissionFailureAsync(
-                    transmissionId, command, errorMessage, TimeSpan.Zero, cancellationToken);
+                    transmissionId, command, ex.Message, TimeSpan.Zero, cancellationToken);
 
                 return SendORUMessageResult.CreateFailure(
-                    transmissionId, errorMessage, command.DestinationEndpoint,
+                    string.Empty, ex.Message, command.DestinationEndpoint,
                     command.Protocol, command.Source);
             }
-
-            // Generate HL7 message string from domain entity
-            var hl7MessageString = await GenerateHL7MessageAsync(command.MessageData, cancellationToken);
 
             // Create transmission request
             var transmissionRequest = new HL7TransmissionRequest(
@@ -83,8 +85,38 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                 TimeoutSeconds: command.TimeoutSeconds,
                 Protocol: command.Protocol);
 
-            // Get appropriate provider and send message
-            var provider = _providerFactory.CreateProvider(command.Protocol);
+            // Now obtain a provider from the factory.
+            IHL7TransmissionProvider provider;
+            try
+            {
+                provider = _providerFactory.CreateProvider(command.Protocol);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Unsupported protocol: {Protocol}", command.Protocol);
+
+                await LogTransmissionFailureAsync(
+                    transmissionId, command, ex.Message, TimeSpan.Zero, cancellationToken);
+
+                return SendORUMessageResult.CreateFailure(
+                    string.Empty, ex.Message, command.DestinationEndpoint,
+                    command.Protocol, command.Source);
+            }
+
+            if (provider is null)
+            {
+                var errorMessage = $"Transmission protocol {command.Protocol} is not supported";
+                _logger.LogWarning("Unsupported protocol (null provider): {Protocol}", command.Protocol);
+
+                await LogTransmissionFailureAsync(
+                    transmissionId, command, errorMessage, TimeSpan.Zero, cancellationToken);
+
+                return SendORUMessageResult.CreateFailure(
+                    string.Empty, errorMessage, command.DestinationEndpoint,
+                    command.Protocol, command.Source);
+            }
+
+            // Send the message using the obtained provider
             var transmissionResult = await provider.SendMessageAsync(transmissionRequest, cancellationToken);
 
             // Log the transmission attempt
@@ -108,7 +140,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                     transmissionId, transmissionResult.ErrorMessage);
 
                 return SendORUMessageResult.CreateFailure(
-                    transmissionId, transmissionResult.ErrorMessage ?? "Transmission failed",
+                    string.Empty, transmissionResult.ErrorMessage ?? "Transmission failed",
                     command.DestinationEndpoint, command.Protocol, command.Source,
                     auditLogId, transmissionResult);
             }
@@ -123,7 +155,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                 transmissionId, command, ex.Message, TimeSpan.Zero, cancellationToken);
 
             return SendORUMessageResult.CreateFailure(
-                transmissionId, ex.Message, command.DestinationEndpoint,
+                string.Empty, ex.Message, command.DestinationEndpoint,
                 command.Protocol, command.Source);
         }
         catch (InvalidOperationException ex)
@@ -136,7 +168,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                 transmissionId, command, ex.Message, TimeSpan.Zero, cancellationToken);
 
             return SendORUMessageResult.CreateFailure(
-                transmissionId, ex.Message, command.DestinationEndpoint,
+                string.Empty, ex.Message, command.DestinationEndpoint,
                 command.Protocol, command.Source);
         }
         catch (Exception ex)
@@ -150,7 +182,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                 transmissionId, command, errorMessage, TimeSpan.Zero, cancellationToken);
 
             return SendORUMessageResult.CreateFailure(
-                transmissionId, errorMessage, command.DestinationEndpoint,
+                string.Empty, errorMessage, command.DestinationEndpoint,
                 command.Protocol, command.Source);
         }
     }
@@ -262,7 +294,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
         };
 
         var savedLog = await _transmissionRepository.SaveTransmissionLogAsync(log, cancellationToken);
-        return savedLog.TransmissionId;
+        return savedLog?.TransmissionId ?? string.Empty;
     }
 
     /// <summary>
@@ -303,6 +335,6 @@ public class SendORUMessageHandler : ISendORUMessageHandler
         };
 
         var savedLog = await _transmissionRepository.SaveTransmissionLogAsync(log, cancellationToken);
-        return savedLog.TransmissionId;
+        return savedLog?.TransmissionId ?? string.Empty;
     }
 }

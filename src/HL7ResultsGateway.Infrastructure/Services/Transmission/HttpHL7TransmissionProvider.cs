@@ -31,6 +31,19 @@ public sealed class HttpHL7TransmissionProvider : BaseHL7TransmissionProvider
     {
         ValidateRequest(request);
 
+        // Allow caller cancellation to be observed early
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // Validate endpoint specifically for HTTP provider
+        if (!await ValidateEndpointAsync(request.Endpoint, cancellationToken))
+        {
+            return CreateResult(
+                success: false,
+                transmissionId: Guid.NewGuid().ToString(),
+                errorMessage: "Invalid endpoint",
+                responseTime: TimeSpan.Zero);
+        }
+
         var stopwatch = Stopwatch.StartNew();
         var transmissionId = Guid.NewGuid().ToString();
 
@@ -105,18 +118,13 @@ public sealed class HttpHL7TransmissionProvider : BaseHL7TransmissionProvider
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
+            // If the caller's cancellation token was signaled, propagate the cancellation
             stopwatch.Stop();
-            const string errorMessage = "HTTP transmission was cancelled";
-
             _logger.LogWarning(
                 "HTTP transmission {TransmissionId} was cancelled after {Duration}ms",
                 transmissionId, stopwatch.ElapsedMilliseconds);
 
-            return CreateResult(
-                success: false,
-                transmissionId: transmissionId,
-                errorMessage: errorMessage,
-                responseTime: stopwatch.Elapsed);
+            throw;
         }
         catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException || !cancellationToken.IsCancellationRequested)
         {

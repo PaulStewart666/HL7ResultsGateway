@@ -44,9 +44,6 @@ public abstract class BaseHL7TransmissionProvider : IHL7TransmissionProvider
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        if (string.IsNullOrWhiteSpace(request.Endpoint))
-            throw new ArgumentException("Endpoint cannot be null or empty", nameof(request));
-
         if (string.IsNullOrWhiteSpace(request.HL7Message))
             throw new ArgumentException("HL7 message cannot be null or empty", nameof(request));
 

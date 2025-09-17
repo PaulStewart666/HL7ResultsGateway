@@ -19,9 +19,19 @@ public class HL7TransmissionLog
     public string Endpoint { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the destination endpoint (legacy property name)
+    /// </summary>
+    public string DestinationEndpoint { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the HL7 message type (e.g., ORU_R01)
     /// </summary>
     public string HL7MessageType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the HL7 Message Control ID (MSH-10 / MSA reference)
+    /// </summary>
+    public string MessageControlId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the patient identifier from the transmitted message
@@ -47,6 +57,11 @@ public class HL7TransmissionLog
     /// Gets or sets the time taken to complete the transmission
     /// </summary>
     public TimeSpan ResponseTime { get; set; }
+
+    /// <summary>
+    /// Gets or sets the size of the message in bytes
+    /// </summary>
+    public int MessageSize { get; set; }
 
     /// <summary>
     /// Gets or sets the source of the transmission request

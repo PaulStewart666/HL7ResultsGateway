@@ -3,7 +3,6 @@ using FluentAssertions;
 using HL7ResultsGateway.Domain.ValueObjects;
 using HL7ResultsGateway.Infrastructure.Services.Transmission;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Moq;
@@ -58,7 +57,7 @@ public class HL7TransmissionProviderFactoryTests
         // Arrange
         var expectedProvider = new HttpHL7TransmissionProvider(_mockHttpLogger.Object, _httpClient);
         _mockServiceProvider
-            .Setup(x => x.GetRequiredService<HttpHL7TransmissionProvider>())
+            .Setup(x => x.GetService(typeof(HttpHL7TransmissionProvider)))
             .Returns(expectedProvider);
 
         // Act
@@ -76,7 +75,7 @@ public class HL7TransmissionProviderFactoryTests
         // Arrange
         var expectedProvider = new HttpHL7TransmissionProvider(_mockHttpLogger.Object, _httpClient);
         _mockServiceProvider
-            .Setup(x => x.GetRequiredService<HttpHL7TransmissionProvider>())
+            .Setup(x => x.GetService(typeof(HttpHL7TransmissionProvider)))
             .Returns(expectedProvider);
 
         // Act
