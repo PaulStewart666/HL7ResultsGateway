@@ -75,14 +75,14 @@ This implementation plan delivers a comprehensive ORU (Observation Result Unsoli
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-016 | Create base `BaseHL7TransmissionProvider` abstract class in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/BaseHL7TransmissionProvider.cs` | |  |
-| TASK-017 | Implement `HttpHL7TransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/HttpHL7TransmissionProvider.cs` for HTTP/HTTPS transmission | |  |
-| TASK-018 | Implement `MLLPTransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/MLLPTransmissionProvider.cs` for MLLP protocol | |  |
-| TASK-019 | Implement `SftpTransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/SftpTransmissionProvider.cs` for SFTP file transfer | |  |
-| TASK-020 | Implement `HL7TransmissionProviderFactory` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/HL7TransmissionProviderFactory.cs` with provider selection logic | |  |
-| TASK-021 | Implement `CosmosHL7TransmissionRepository` in `src/HL7ResultsGateway.Infrastructure/Repositories/CosmosHL7TransmissionRepository.cs` for Azure Cosmos DB persistence | |  |
-| TASK-022 | Create `HL7TransmissionOptions` configuration class in `src/HL7ResultsGateway.Infrastructure/Configuration/HL7TransmissionOptions.cs` with validation attributes | |  |
-| TASK-023 | Create `EndpointConfiguration` class in `src/HL7ResultsGateway.Infrastructure/Configuration/EndpointConfiguration.cs` for endpoint-specific settings | |  |
+| TASK-016 | Create base `BaseHL7TransmissionProvider` abstract class in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/BaseHL7TransmissionProvider.cs` | ✅ | 2025-09-17 |
+| TASK-017 | Implement `HttpHL7TransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/HttpHL7TransmissionProvider.cs` for HTTP/HTTPS transmission | ✅ | 2025-09-17 |
+| TASK-018 | Implement `MLLPTransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/MLLPTransmissionProvider.cs` for MLLP protocol | ✅ | 2025-09-17 |
+| TASK-019 | Implement `SftpTransmissionProvider` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/SftpTransmissionProvider.cs` for SFTP file transfer | ✅ | 2025-09-17 |
+| TASK-020 | Implement `HL7TransmissionProviderFactory` in `src/HL7ResultsGateway.Infrastructure/Services/Transmission/HL7TransmissionProviderFactory.cs` with provider selection logic | ✅ | 2025-09-17 |
+| TASK-021 | Implement `CosmosHL7TransmissionRepository` in `src/HL7ResultsGateway.Infrastructure/Repositories/CosmosHL7TransmissionRepository.cs` for Azure Cosmos DB persistence | ✅ | 2025-09-17 |
+| TASK-022 | Create `HL7TransmissionOptions` configuration class in `src/HL7ResultsGateway.Infrastructure/Configuration/HL7TransmissionOptions.cs` with validation attributes | ✅ | 2025-09-17 |
+| TASK-023 | Create `EndpointConfiguration` class in `src/HL7ResultsGateway.Infrastructure/Configuration/EndpointConfiguration.cs` for endpoint-specific settings | ✅ | 2025-09-17 |
 
 ### Implementation Phase 4: API Layer Azure Function
 
