@@ -63,9 +63,9 @@ public class SendORURequestValidator : AbstractValidator<SendORURequestDTO>
                 RuleFor(x => x.MessageData.Observations)
                     .NotNull()
                     .WithMessage("Observations are required")
-                    .Must(observations => observations.Count > 0)
+                    .Must(observations => observations != null && observations.Count > 0)
                     .WithMessage("At least one observation is required")
-                    .Must(observations => observations.Count <= 100)
+                    .Must(observations => observations != null && observations.Count <= 100)
                     .WithMessage("Cannot exceed 100 observations per message")
                     .DependentRules(() =>
                     {

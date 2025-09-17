@@ -298,7 +298,7 @@ public class SendORUMessageHandler : ISendORUMessageHandler
                 CommandId = command.CommandId,
                 Headers = command.RequestHeaders,
                 TimeoutSeconds = command.TimeoutSeconds,
-                ObservationCount = command.MessageData.Observations.Count
+                ObservationCount = command.MessageData?.Observations?.Count ?? 0
             })
         };
 
