@@ -49,23 +49,25 @@ builder.Services.AddScoped<MLLPTransmissionProvider>();
 builder.Services.AddScoped<SftpTransmissionProvider>();
 builder.Services.AddScoped<IHL7TransmissionProviderFactory, HL7TransmissionProviderFactory>();
 
-// Register Cosmos DB client (if connection string is configured)
-builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+// Register repository - use CosmosDB if available, otherwise in-memory for development
+var configuration = builder.Configuration;
+var cosmosConnectionString = configuration.GetConnectionString("CosmosDb") ??
+                            configuration.GetValue<string>("HL7Transmission:CosmosDb:ConnectionString");
+
+if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 {
-    var configuration = serviceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
-    var connectionString = configuration.GetConnectionString("CosmosDb") ??
-                          configuration.GetValue<string>("HL7Transmission:CosmosDb:ConnectionString");
-
-    if (!string.IsNullOrWhiteSpace(connectionString))
+    // Production: Use Cosmos DB
+    builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     {
-        return new CosmosClient(connectionString);
-    }
-
-    // Return a mock client or throw exception based on requirements
-    throw new InvalidOperationException("CosmosDB connection string is not configured");
-});
-
-builder.Services.AddScoped<IHL7TransmissionRepository, CosmosHL7TransmissionRepository>();
+        return new CosmosClient(cosmosConnectionString);
+    });
+    builder.Services.AddScoped<IHL7TransmissionRepository, CosmosHL7TransmissionRepository>();
+}
+else
+{
+    // Development: Use in-memory implementation
+    builder.Services.AddSingleton<IHL7TransmissionRepository, InMemoryHL7TransmissionRepository>();
+}
 
 // Register application handlers
 builder.Services.AddScoped<IProcessHL7MessageHandler, ProcessHL7MessageHandler>();

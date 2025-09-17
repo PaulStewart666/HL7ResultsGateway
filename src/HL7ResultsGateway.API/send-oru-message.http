@@ -51,7 +51,7 @@ Content-Type: application/json
 X-Correlation-ID: {{$guid}}
 
 {
-  "destinationEndpoint": "https://secure.healthcare.example.com/hl7/receive",
+  "destinationEndpoint": "https://wrrsendoscopyserviceuat.wales.nhs.uk/SubmitHL7Message",
   "messageData": {
     "messageControlId": "MSG002",
     "messageType": "ORU_R01",
@@ -85,6 +85,7 @@ X-Correlation-ID: {{$guid}}
   },
   "protocol": "HTTPS",
   "timeoutSeconds": 60,
+  "port": 1065,
   "headers": {
     "Content-Type": "application/x-hl7",
     "X-API-Key": "your-api-key-here",

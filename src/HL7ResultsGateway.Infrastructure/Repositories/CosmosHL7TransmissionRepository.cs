@@ -5,6 +5,7 @@ using HL7ResultsGateway.Domain.ValueObjects;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace HL7ResultsGateway.Infrastructure.Repositories;
@@ -462,5 +463,139 @@ public sealed class CosmosHL7TransmissionRepository : IHL7TransmissionRepository
         public string? Metadata { get; set; }
         public DateTime CreatedAt { get; set; }
         public int TTL { get; set; } // Time-to-live for auto-deletion
+    }
+}
+
+/// <summary>
+/// In-memory implementation of HL7 transmission repository for development and testing
+/// </summary>
+public sealed class InMemoryHL7TransmissionRepository : IHL7TransmissionRepository
+{
+    private readonly ConcurrentDictionary<string, HL7TransmissionLog> _logs = new();
+    private readonly ILogger<InMemoryHL7TransmissionRepository> _logger;
+
+    public InMemoryHL7TransmissionRepository(ILogger<InMemoryHL7TransmissionRepository> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger.LogInformation("Using in-memory HL7 transmission repository for development");
+    }
+
+    public Task<HL7TransmissionLog> SaveTransmissionLogAsync(
+        HL7TransmissionLog transmissionLog,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(transmissionLog);
+
+        // Ensure transmission has an ID
+        if (string.IsNullOrWhiteSpace(transmissionLog.TransmissionId))
+        {
+            transmissionLog.TransmissionId = Guid.NewGuid().ToString();
+        }
+
+        _logs.AddOrUpdate(transmissionLog.TransmissionId, transmissionLog, (_, _) => transmissionLog);
+
+        _logger.LogDebug("Saved transmission log {TransmissionId} to in-memory store", transmissionLog.TransmissionId);
+        return Task.FromResult(transmissionLog);
+    }
+
+    public Task<HL7TransmissionLog?> GetTransmissionLogAsync(
+        string transmissionId,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(transmissionId))
+            return Task.FromResult<HL7TransmissionLog?>(null);
+
+        _logs.TryGetValue(transmissionId, out var log);
+        return Task.FromResult(log);
+    }
+
+    public Task<IEnumerable<HL7TransmissionLog>> GetTransmissionHistoryAsync(
+        string? patientId = null,
+        DateTime? from = null,
+        DateTime? to = null,
+        TransmissionProtocol? protocol = null,
+        bool? success = null,
+        int limit = 100,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _logs.Values.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(patientId))
+            query = query.Where(log => log.PatientId == patientId);
+
+        if (from.HasValue)
+            query = query.Where(log => log.SentAt >= from.Value);
+
+        if (to.HasValue)
+            query = query.Where(log => log.SentAt <= to.Value);
+
+        if (protocol.HasValue)
+            query = query.Where(log => log.Protocol == protocol.Value);
+
+        if (success.HasValue)
+            query = query.Where(log => log.Success == success.Value);
+
+        var results = query
+            .OrderByDescending(log => log.SentAt)
+            .Take(limit)
+            .ToList();
+
+        _logger.LogDebug("Retrieved {Count} transmission logs from in-memory store", results.Count);
+        return Task.FromResult<IEnumerable<HL7TransmissionLog>>(results);
+    }
+
+    public Task<TransmissionStatistics> GetTransmissionStatisticsAsync(
+        DateTime from,
+        DateTime to,
+        CancellationToken cancellationToken = default)
+    {
+        var logs = _logs.Values
+            .Where(log => log.SentAt >= from && log.SentAt <= to)
+            .ToList();
+
+        var totalTransmissions = logs.Count;
+        var successfulTransmissions = logs.Count(log => log.Success);
+        var failedTransmissions = totalTransmissions - successfulTransmissions;
+        var successRate = totalTransmissions > 0 ? (double)successfulTransmissions / totalTransmissions : 0.0;
+        var averageResponseTime = logs.Any()
+            ? TimeSpan.FromMilliseconds(logs.Average(log => log.ResponseTime.TotalMilliseconds))
+            : TimeSpan.Zero;
+
+        var transmissionsByProtocol = logs
+            .GroupBy(log => log.Protocol)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var statistics = new TransmissionStatistics(
+            totalTransmissions,
+            successfulTransmissions,
+            failedTransmissions,
+            successRate,
+            averageResponseTime,
+            from,
+            to,
+            transmissionsByProtocol);
+
+        _logger.LogDebug("Calculated transmission statistics for {From} to {To}: {Total} total, {Success} successful",
+            from, to, totalTransmissions, successfulTransmissions);
+
+        return Task.FromResult(statistics);
+    }
+
+    public Task<int> DeleteOldLogsAsync(
+        int retentionDays,
+        CancellationToken cancellationToken = default)
+    {
+        var cutoffDate = DateTime.UtcNow.AddDays(-retentionDays);
+        var logsToDelete = _logs.Values
+            .Where(log => log.SentAt < cutoffDate)
+            .ToList();
+
+        foreach (var log in logsToDelete)
+        {
+            _logs.TryRemove(log.TransmissionId, out _);
+        }
+
+        _logger.LogDebug("Deleted {Count} old transmission logs from in-memory store", logsToDelete.Count);
+        return Task.FromResult(logsToDelete.Count);
     }
 }
